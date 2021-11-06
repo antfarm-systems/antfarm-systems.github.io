@@ -6,10 +6,12 @@
 
 /* Markdown styles */
 .markdown-body a {
+  font-family: 'Cousine', monospace;
   text-decoration: none;
   color: #357edd;
 }
 .markdown-body .highlighter-rouge {
+  font-family: 'Cousine', monospace;
   padding: .25rem .5rem;
 }
 .markdown-body pre {
