@@ -5,7 +5,7 @@ url:              https://antfarm.systems # Site url, without a slash at the end
 signoff:          "The AntFarm" # Your name
 facebook_appid:   # APP ID for like button, remove from /_includes/share.html if unwanted.
 google_analytics: G-DMG7WF4SSG # Set tracking, remove from /javascripts/basic.js if unwanted.
-share:            false # Turn on twitter and facebook share buttons
+share:            true # Turn on twitter and facebook share buttons
 
 links:
   - name:         Posts
