@@ -1,5 +1,5 @@
 {% assign is_post = page.date %}
-<!doctype>
+<!doctype html>
 <html lang="en">
   <head>
     <meta content='{{ page.title }} - {{ site.title }}' name='title' />
@@ -48,8 +48,10 @@
       {% if is_post %}{% include pagination.html %}{% endif %}
     </div>
     <footer class="mw7 center tc pt3 pb4 silver">
-      Built with Jekyll using <a href="http://github.com/muan/scribble" class="link silver hover-blue pv1">Scribble</a>.
-      <img src="{{ site.url }}/images/scribble2.png" alt="scribble" class="mt4 db center" />
+
+     <br>
+     <br>
+     {% include license.html %}
     </footer>
   </body>
 </html>
