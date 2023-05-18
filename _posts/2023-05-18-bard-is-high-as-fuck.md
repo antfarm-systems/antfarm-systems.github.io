@@ -24,3 +24,6 @@ I asked Google's Bard AI a simple question.
 
 
 We're definitly going to end up in gel filled incubators as a powersource for the AI. 
+
+
+![bard_tea.png](/images/bard_tea.png)
