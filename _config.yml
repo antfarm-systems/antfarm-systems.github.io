@@ -24,6 +24,7 @@ defaults:
 include:
   - "*.txt"
 exclude:
+  - "vendor"
   - "CNAME"
   - "Gemfile*"
   - "README*"
