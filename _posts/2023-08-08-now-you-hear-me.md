@@ -8,3 +8,5 @@ Now you fucking hear me. I've been saying this shit for 7 months.
 you sons of mutha fuckin' bitches.
 
 
+;;
+this post serves no good but to make me feel good.
