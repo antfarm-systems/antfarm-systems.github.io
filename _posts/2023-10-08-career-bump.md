@@ -8,4 +8,4 @@ I've been working for one the the FAANGs/MAMAA for several years now. It's been 
 Does having a a role of Solutions Architect/TAM (Customer Engineer/Enterprise Account Engineer)/Customer Success Manager help or hinder the next role? How to measure success of folks who used to be in these roles, but moved out of FAANG/MAMAAA?
 
 
-#mecagoendiez
+#mecagoendiez 
