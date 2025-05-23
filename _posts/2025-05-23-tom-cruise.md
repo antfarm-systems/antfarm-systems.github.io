@@ -14,12 +14,12 @@ While little Tom Cruise is fidgeting and yelling "I FEEL THE NEED FOR SPEED!" an
 
 People are just smiling awkwardly, showing great empathy to Will-the-father, probably because most of them have had the experience of a toddler meltdown in the fabric softener aisle. "EVERYBODY RUNS, FLETCH!"
 
-While Will is apologizing for the "SHOW ME THE MONEY!" ruckus of his little guy.....
+While Will is apologizing for the "SHOW ME THE MONEY!" ruckus of his little guy..... "HELP ME, HELP YOU!"
+
 
 It'll get better daddy Will. You're doing great!
 
-
-"HELP ME, HELP YOU!"
+...
 
 anyway happy father's day.
 
