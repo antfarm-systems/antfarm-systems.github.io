@@ -1,6 +1,7 @@
 ---
 title: bluetooth is magic that personally hates you
 date: 2025-10-13
+tags: [tech, rants, hardware]
 ---
 
 Bluetooth: the technology that works perfectly until you need it to work.

@@ -1,6 +1,7 @@
 ---
 title: documentation is a lie we tell ourselves
 date: 2025-10-13
+tags: [tech, development, opinion, rants]
 ---
 
 You know what's hilarious? We all agree documentation is important. We nod sagely in meetings about it. We add it to sprint planning. We create entire tickets for it.

@@ -1,6 +1,7 @@
 ---
 title: password requirements are a psychological experiment
 date: 2025-10-13
+tags: [tech, security, rants, ux]
 ---
 
 Your password must contain:

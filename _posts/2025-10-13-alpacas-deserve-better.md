@@ -1,6 +1,7 @@
 ---
 title: alpacas are literally perfect and you're all sleeping on them
 date: 2025-10-13
+tags: [animals, wholesome, opinion]
 ---
 
 Okay. Deep breath. We need to have a conversation about alpacas and how humanity is absolutely FAILING to appreciate them properly.

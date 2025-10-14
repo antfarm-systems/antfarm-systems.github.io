@@ -1,17 +1,35 @@
 <link href='{{ site.url }}/images/fav.png' rel='shortcut icon'>
 <link href='{{ site.url }}/stylesheets/style.css' rel='stylesheet' type='text/css' />
 <link href='{{ site.url }}/stylesheets/syntax.css' rel='stylesheet' type='text/css' />
+<link rel="alternate" type="application/rss+xml" title="{{ site.title }}" href="{{ site.url }}/feed.xml">
 
 <meta content='width=device-width, initial-scale=1.0, user-scalable=no' name='viewport'>
 <meta content='text/html; charset=utf-8' http-equiv='content-type' />
 {% if page.date %}
+  {% assign description = page.excerpt | default: page.content | strip_html | strip_newlines | truncate: 160 %}
+  <meta name="description" content="{{ description }}" />
   <meta content='{{ site.url }}{{ page.url }}' property='og:url' />
-  <meta content="{{ page.content | strip_html | strip_newlines | truncate: 120 }}" property='og:description' />
+  <meta content="{{ description }}" property='og:description' />
   <meta content="article" property="og:type" />
+  <meta content="{{ page.image | default: '/images/ant.png' | prepend: site.url }}" property="og:image" />
+  <meta content="400" property="og:image:width" />
+  <meta content="400" property="og:image:height" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="{{ page.title }}" />
+  <meta name="twitter:description" content="{{ description }}" />
+  <meta name="twitter:image" content="{{ page.image | default: '/images/ant.png' | prepend: site.url }}" />
 {% else %}
+  <meta name="description" content="{{ site.description }}" />
   <meta content='{{ site.url }}' property='og:url' />
   <meta content="{{ site.description }}" property='og:description' />
   <meta content="blog" property="og:type" />
+  <meta content="{{ site.url }}/images/ant.png" property="og:image" />
+  <meta content="400" property="og:image:width" />
+  <meta content="400" property="og:image:height" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="{{ site.title }}" />
+  <meta name="twitter:description" content="{{ site.description }}" />
+  <meta name="twitter:image" content="{{ site.url }}/images/ant.png" />
 {% endif %}
 <!-- - -->
 

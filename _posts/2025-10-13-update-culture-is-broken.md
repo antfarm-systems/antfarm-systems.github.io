@@ -1,6 +1,7 @@
 ---
 title: software updates are gaslighting us
 date: 2025-10-13
+tags: [tech, rants, software, ux]
 ---
 
 Your computer wants to restart. Right now. In the middle of your presentation. It's been asking for three days and it's done being polite about it.

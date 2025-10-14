@@ -1,6 +1,7 @@
 ---
 title: serverless cost optimization for cheapskates
 date: 2025-10-05
+tags: [aws, cloud, serverless, cost-optimization]
 ---
 
 Your serverless bill just made you question your life choices. Welcome to the club.

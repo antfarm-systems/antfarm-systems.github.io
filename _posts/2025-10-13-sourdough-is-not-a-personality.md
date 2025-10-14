@@ -1,6 +1,7 @@
 ---
 title: sourdough is not a personality trait
 date: 2025-10-13
+tags: [food, baking, culture, rants]
 ---
 
 Listen. I'm thrilled you discovered bread. Truly. Humanity figured this out around 10,000 BC, but better late than never.
