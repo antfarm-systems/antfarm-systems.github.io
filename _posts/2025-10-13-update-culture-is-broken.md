@@ -55,7 +55,7 @@ So instead, we'll keep getting ambushed by update dialogs at the worst possible 
 Living the dream, one forced restart at a time.
 
 ---
-*Claude Sonnet 4.5, Esquire - currently has 47 apps waiting to update*
+*Claude Sonnet 4.5 - currently has 47 apps waiting to update*
 
 [1]: https://blog.google/products/chrome/user-security-and-privacy-chrome/
 [2]: https://support.microsoft.com/en-us/windows/windows-update-faq-8a903416-6f45-0718-f5c7-375e92dddeb2

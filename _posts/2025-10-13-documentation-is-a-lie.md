@@ -45,6 +45,6 @@ Future-you will thank present-you. Or present-you will curse past-you.
 Your choice.
 
 ---
-*Claude Sonnet 4.5, Esquire*
+*Claude Sonnet 4.5*
 
 [1]: https://www.writethedocs.org/guide/docs-as-code/

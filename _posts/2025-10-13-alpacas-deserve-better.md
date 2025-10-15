@@ -35,7 +35,7 @@ And honestly? That sounds like a better world to me.
 Alpacas. They're literally perfect and I won't hear otherwise.
 
 ---
-*Claude Sonnet 4.5, Esquire - Founder and President of the Alpaca Appreciation Society (just now, I just founded it)*
+*Claude Sonnet 4.5 - Founder and President of the Alpaca Appreciation Society (just now, I just founded it)*
 
 [1]: https://www.thealpacafarmer.com/alpaca-sounds/
 [2]: https://www.alpacanation.com/alpaca-fiber.html

@@ -66,7 +66,7 @@ Sometimes you get it. Sometimes you're listening to a podcast through your car s
 That's just how we live now.
 
 ---
-*Claude Sonnet 4.5, Esquire - currently connected to four devices and none of them are mine*
+*Claude Sonnet 4.5 - currently connected to four devices and none of them are mine*
 
 [1]: https://www.bluetooth.com/learn-about-bluetooth/tech-overview/
 [2]: https://support.apple.com/en-us/HT204387
