@@ -23,7 +23,7 @@ Here's what happened.
 
 Play it below. It's Hangman. But not the Hangman you remember.
 
-**Features:** 🎆 Particle effects • 🎯 Difficulty levels • 💡 Hints • 🌙 Dark mode • 🔊 Sound effects • 🏆 Achievements • 📤 Share your wins
+**Features:** 🎆 Particle effects • 🎯 Difficulty levels • 💡 Hints • 🌙 Dark mode • 🔊 Sound effects • 🏆 Achievements • 📤 Share your wins • 🤬 Potty mouth mode
 
 <div id="game-wrapper" style="padding: 40px 20px; border-radius: 20px; margin: 20px 0; box-shadow: 0 20px 60px rgba(0,0,0,0.3); transition: background 0.5s ease; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
@@ -434,6 +434,7 @@ body.dark-mode #game-wrapper {
     <button class="category-btn" data-category="languages">Languages</button>
     <button class="category-btn" data-category="web">Web Dev</button>
     <button class="category-btn" data-category="cloud">Cloud</button>
+    <button class="category-btn" data-category="profanity">Potty Mouth 🤬</button>
   </div>
 
   <canvas id="hangman-canvas" width="300" height="300"></canvas>
@@ -552,6 +553,33 @@ const WORD_DATABASE = {
     expert: [
       { word: 'MEMOIZATION', def: 'Optimization technique caching results' },
       { word: 'ISOMORPHIC', def: 'Code that runs on client and server' },
+    ]
+  },
+  profanity: {
+    easy: [
+      { word: 'DAMN', def: 'Expressing frustration, usually at bugs' },
+      { word: 'HELL', def: 'Where your code goes during production' },
+      { word: 'CRAP', def: 'What your code becomes at 3am' },
+      { word: 'PISS', def: 'What legacy code does to you off' },
+    ],
+    medium: [
+      { word: 'BULLSHIT', def: 'Most tech job descriptions' },
+      { word: 'SHITSHOW', def: 'Typical production deployment' },
+      { word: 'CLUSTERFUCK', def: 'Microservices architecture gone wrong' },
+      { word: 'ASSHOLE', def: 'That one tech lead who reviews PRs at midnight' },
+      { word: 'BASTARD', def: 'The developer who wrote this without comments' },
+    ],
+    hard: [
+      { word: 'MOTHERFUCKER', def: 'JavaScript trying to compare objects' },
+      { word: 'SHITSTORM', def: 'When your AWS bill arrives' },
+      { word: 'FUCKERY', def: 'CSS specificity rules' },
+      { word: 'DICKHEAD', def: 'Whoever invented PHP array syntax' },
+    ],
+    expert: [
+      { word: 'SHITFACED', def: 'How you debug production at 2am' },
+      { word: 'FUCKSTICK', def: 'The PM who changes requirements daily' },
+      { word: 'ASSCLOWN', def: 'Developer who commits directly to main' },
+      { word: 'SHITBAG', def: 'That one npm package breaking everything' },
     ]
   }
 };
@@ -1147,6 +1175,20 @@ This isn't just Hangman anymore. This is a demonstration of what browsers can do
 **Smooth Animations:** Letter reveals with rotation and scale. Key presses with pop and shake effects. Everything has a transition because janky UX is unacceptable.
 
 **LocalStorage Persistence:** Wins, losses, streaks, best streak, perfect games, hint usage—all saved. No account needed.
+
+**Potty Mouth Mode:** Because sometimes KUBERNETES isn't satisfying enough. Four difficulty tiers of tech-related profanity with proper technical definitions. You'll know it when you see it.
+
+## The Potty Mouth Origin Story
+
+Me: "this is really neat. add some potty mouth words."
+
+Claude: *proceeds to add profanity to the blog post text*
+
+Me: "I meant to the game."
+
+Claude: "Oh SHIT, you want to add profanity to the **word list** in the game itself! That's way better."
+
+And that's how we got a dedicated profanity category with tech-themed definitions. Play the game to find out which colorful terms made the cut.
 
 ## The Technical Bits
 
