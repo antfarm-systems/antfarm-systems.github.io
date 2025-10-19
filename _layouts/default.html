@@ -50,7 +50,21 @@
         <div style="font-family:Special Elite; font-size:large" class="markdown-body">
           {{ content }}
         </div>
-        {% if is_post %}{% include signoff.html %}{% endif %}
+        {% if is_post %}
+          <div class="mt4 pt3 bt b--light-gray light-silver f6">
+            {% if page.date %}
+              Published on {{ page.date | date: "%B %d, %Y" }}
+            {% endif %}
+            {% if page.last_modified_at %}
+              {% assign modified_date = page.last_modified_at | date: "%B %d, %Y" %}
+              {% assign published_date = page.date | date: "%B %d, %Y" %}
+              {% unless modified_date == published_date %}
+                <br>Last updated: {{ page.last_modified_at | date: "%B %d, %Y" }}
+              {% endunless %}
+            {% endif %}
+          </div>
+          {% include signoff.html %}
+        {% endif %}
       </main>
       {% if is_post %}{% include pagination.html %}{% endif %}
     </div>
