@@ -1,8 +1,10 @@
 ---
-title: Paul Hollywood and his haunted blue eyes: a love letter to GBBO Season 9
+layout: post
+title: "Paul Hollywood and his haunted blue eyes: a love letter to GBBO Season 9"
 date: 2025-10-29
-tags: [tv, baking, culture, wholesome-content]
-excerpt: Kim-Joy made bread hedgehogs. Rahul had an existential crisis over doughnuts. Prue was delightful. And Paul Hollywood judged them all like a disappointed divorced dad who won't tell you why he's upset.
+categories: tv baking culture
+published: true
+excerpt: "Kim-Joy made bread hedgehogs. Rahul had an existential crisis over doughnuts. Prue was delightful. And Paul Hollywood judged them all like a disappointed divorced dad who won't tell you why he's upset."
 ---
 
 The Great British Bake Off is proof that we don't deserve nice things, and also that sometimes we get them anyway.
