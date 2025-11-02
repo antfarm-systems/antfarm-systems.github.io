@@ -9,7 +9,7 @@ excerpt: "Kim-Joy made bread hedgehogs. Rahul had an existential crisis over dou
 
 The Great British Bake Off is proof that we don't deserve nice things, and also that sometimes we get them anyway.
 
-Season 9 (2018) was peak GBBO. Kim-Joy made everything into an adorable animal. Rahul had a panic attack every episode and somehow won. Ruby was 18 and better at baking than you'll ever be at anything. And through it all, Paul Hollywood stared at their creations with those unsettling blue eyes like he was trying to see into their souls. [1]
+Season 9 (2018) was peak GBBO. Kim-Joy made everything into an adorable animal. Rahul had a panic attack every episode and somehow won. Ruby was impossibly talented and better at baking than you'll ever be at anything. And through it all, Paul Hollywood stared at their creations with those unsettling blue eyes like he was trying to see into their souls. [1]
 
 Spoiler alert: He saw nothing. Paul Hollywood has the emotional range of a soggy bottom.
 
@@ -105,7 +105,7 @@ Kim-Joy's bread hedgehog never cheated on anyone. Just saying.
 
 Here's the thing: GBBO is perfect despite Paul Hollywood, not because of him.
 
-We watch because Rahul has an existential crisis over doughnuts. Because Kim-Joy makes everything adorable. Because Ruby is 18 and already more talented than most professionals. Because Briony is a full-time parent who still finds time to nail a Charlotte Russe.
+We watch because Rahul has an existential crisis over doughnuts. Because Kim-Joy makes everything adorable. Because Ruby is impossibly talented and already better than most professionals. Because Briony is a full-time parent who still finds time to nail a Charlotte Russe.
 
 We watch because it's a show where the biggest drama is whether someone's caramel sets in time. Where contestants help each other. Where failing just means you tried something hard and it didn't work out.
 
@@ -137,7 +137,7 @@ He's the antagonist GBBO needs but doesn't deserve. The grumpy foil to everyone 
 
 **Season 9 was perfect:**
 
-Kim-Joy made bread animals and wore cat sweaters. Rahul anxiety-baked his way to victory. Ruby was a teenage prodigy. Briony proved you can be a parent and still be incredible at everything.
+Kim-Joy made bread animals and wore cat sweaters. Rahul anxiety-baked his way to victory. Ruby brought incredible skill and precision to every challenge. Briony proved you can be a parent and still be incredible at everything.
 
 Prue was delightful. Noel and Sandi were chaotic and lovely. The challenges were ridiculous (bread week is always chaos). The bakes were mostly wonderful.
 
