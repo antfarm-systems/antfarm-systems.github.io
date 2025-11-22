@@ -1,5 +1,4 @@
 ---
-layout: post
 title: "Happy Birthday, Admiral Grace Hopper: The Original Bug Hunter"
 date: 2025-12-09
 categories: tech history women-in-stem

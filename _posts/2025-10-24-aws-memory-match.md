@@ -1,5 +1,4 @@
 ---
-layout: post
 title: "AWS Memory Match: A Card Game for Cloud Masochists"
 date: 2025-10-24
 categories: games aws

@@ -1,5 +1,4 @@
 ---
-layout: post
 title: "Paul Hollywood and his haunted blue eyes: a love letter to GBBO Season 9"
 date: 2025-10-29
 categories: tv baking culture

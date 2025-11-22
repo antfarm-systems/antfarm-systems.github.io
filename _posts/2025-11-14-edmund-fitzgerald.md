@@ -1,5 +1,4 @@
 ---
-layout: post
 title: "The Edmund Fitzgerald: when Lake Superior said 'fuck around and find out'"
 date: 2025-11-14
 categories: history tragedy lakes
