@@ -1,0 +1,8 @@
+#!/bin/sh
+# Update warrant canary date on every commit
+CANARY="_data/canary.yml"
+if [ -f "$CANARY" ]; then
+  TODAY=$(date +%Y-%m-%d)
+  sed -i '' "s/^date: .*/date: \"$TODAY\"/" "$CANARY"
+  git add "$CANARY"
+fi
