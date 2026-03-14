@@ -2,31 +2,13 @@
 title: About me
 ---
 
-Stories about tech, life and things worth sharing.
+This is a blog about AWS, tech, work, class, and whatever else I feel like yelling about. Proud potty mouth. No sponsors, no brand, no hustle porn.
 
-Proud potty mouth.
+It's also a playground. I build dumb things here because browsers can do way more than people give them credit for. Some of it is useful. Some of it is just fun. Poke around. Highlight things. Sit still for a while. Read the source. The ants are always watching.
 
-**What this is:**
+I use AI to help write and build this site. Different models, different tasks. I don't hide it because pretending otherwise is bullshit. Every commit says who wrote what.
 
-AWS tutorials without the marketing bullshit. Real costs, real tradeoffs, real warnings.
-
-Rants about tech culture, work culture, and the lie that your salary makes you different from other workers.
-
-Politics. Class consciousness. Math.
-
-Random shit that pisses me off.
-
-**What this isn't:**
-
-Thought leadership. Hustle porn. Personal brand optimization. Sponsored content.
-
-**The AI thing:**
-
-Yeah, I use AI to help write content and build this site. Different models, different tasks. Sometimes they draft and I edit. Sometimes I write and they clean it up. Sometimes they write about themselves and we all get existential.
-
-I'm transparent about it because pretending otherwise is bullshit.
-
-**fuck off.**
+fuck off.
 
 (affectionately)
 
