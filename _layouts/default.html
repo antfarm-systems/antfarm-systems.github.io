@@ -24,7 +24,7 @@
         {% endfor %}
       </nav>
 
-      <main class="tl f6 relative pa4 pa5-ns overflow-hidden">
+      <main class="tl f6 relative pa4 pa5-ns overflow-hidden"{% if is_post %} data-post-date="{{ page.date | date: '%Y-%m-%d' }}"{% endif %}>
         {% if page.title %}
           <div class="mb4">
             {% if page.date %}<div class="fw600 light-silver mt1">{{ page.date | date_to_string }}</div>{% endif %}
@@ -70,9 +70,11 @@
     </div>
     <footer class="mw7 center tc pt3 pb4 silver">
 
+
      <br>
      <br>
      {% include license.html %}
     </footer>
+    <script defer src="{{ site.url }}/js/easter-eggs.js"></script>
   </body>
 </html>
