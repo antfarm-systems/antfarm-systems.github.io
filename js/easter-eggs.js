@@ -283,20 +283,15 @@
     var postDate = new Date(main.getAttribute('data-post-date'));
     var ageInDays = (Date.now() - postDate.getTime()) / (1000 * 60 * 60 * 24);
     if (ageInDays > 180) {
-      // Subtle sepia for posts older than 6 months
       var sepiaAmount = Math.min((ageInDays - 180) / 700, 0.3);
       main.style.filter = 'sepia(' + sepiaAmount + ')';
 
       // Coffee stain for posts older than 2 years
       if (ageInDays > 730) {
-        var stain = document.createElement('div');
-        stain.style.cssText = 'position:absolute;top:60px;right:20px;width:120px;height:100px;border-radius:50%;background:radial-gradient(ellipse,rgba(139,90,43,0.08) 0%,rgba(139,90,43,0.04) 50%,transparent 70%);pointer-events:none;transform:rotate(-15deg);z-index:0;';
+        var stain = document.createElement('img');
+        stain.src = '/images/coffee-stain-png-9.png';
+        stain.style.cssText = 'position:absolute;top:40px;right:10px;width:150px;height:150px;pointer-events:none;transform:rotate(-15deg);z-index:0;opacity:0.6;';
         main.appendChild(stain);
-
-        // Second smaller stain
-        var stain2 = document.createElement('div');
-        stain2.style.cssText = 'position:absolute;bottom:120px;left:40px;width:80px;height:70px;border-radius:50%;background:radial-gradient(ellipse,rgba(139,90,43,0.06) 0%,rgba(139,90,43,0.03) 50%,transparent 70%);pointer-events:none;transform:rotate(30deg);z-index:0;';
-        main.appendChild(stain2);
       }
     }
   }
