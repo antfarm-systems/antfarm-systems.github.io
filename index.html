@@ -1,6 +1,33 @@
 ---
 ---
 
+{% if site.data.starthere %}
+<section class="mb5" aria-labelledby="start-here">
+  <div class="flex items-baseline justify-between">
+    <h2 id="start-here" class="ttu f4 mt0 mb2 cb" style="font-family: 'Cousine', monospace;">Start here</h2>
+    <span class="f7 silver i">hand-picked, not algorithmic</span>
+  </div>
+  {% if site.data.starthere.intro %}
+  <p class="mt0 mb3 dark-gray lh-copy">{{ site.data.starthere.intro }}</p>
+  {% endif %}
+  <ol class="list pa0 ma0">
+    {% for pick in site.data.starthere.picks %}
+      {% assign matched = site.posts | where_exp: "p", "p.url contains pick.slug" | first %}
+      {% if matched %}
+      <li class="mv3 pb3 bb b--light-gray start-here-item">
+        <a href="{{ site.url }}{{ matched.url }}" class="db link dark-gray hover-mid-gray">
+          <div class="f5 fw6 mb1" style="font-family: 'Cousine', monospace;">{{ matched.title }}</div>
+          <div class="lh-copy mid-gray">{{ pick.blurb }}</div>
+        </a>
+      </li>
+      {% endif %}
+    {% endfor %}
+  </ol>
+</section>
+
+<h2 class="ttu f4 mt0 mb3 cb" style="font-family: 'Cousine', monospace;">Everything, newest first</h2>
+{% endif %}
+
 <ul class="list pa0">
   {% for post in site.posts %}
   <li class="mv2">

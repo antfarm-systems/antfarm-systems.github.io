@@ -11,6 +11,9 @@ links:
   - name:         Posts
     url:          /
     external:     false
+  - name:         Collections
+    url:          /collections/
+    external:     false
   - name:         About This Page
     url:          /about
     external:     false

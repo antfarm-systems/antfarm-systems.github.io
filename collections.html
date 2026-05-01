@@ -1,0 +1,30 @@
+---
+title: Collections
+permalink: /collections/
+---
+
+<p class="lh-copy mb4">
+  Five years of posts, grouped into reading paths. Pick one that sounds
+  right for the mood you're in. These are curated by hand — no algorithm,
+  no engagement score, just what I think belongs together.
+</p>
+
+{% for col in site.data.collections %}
+<section class="mb5 pb4 bb b--light-gray" id="{{ col.id }}" aria-labelledby="h-{{ col.id }}">
+  <h2 id="h-{{ col.id }}" class="ttu f3 mt0 mb2 cb" style="font-family: 'Cousine', monospace;">{{ col.title }}</h2>
+  {% if col.intro %}<p class="mt0 mb3 dark-gray lh-copy">{{ col.intro }}</p>{% endif %}
+  <ol class="list pa0 ma0">
+    {% for slug in col.posts %}
+      {% assign matched = site.posts | where_exp: "p", "p.url contains slug" | first %}
+      {% if matched %}
+      <li class="mv2">
+        <a href="{{ site.url }}{{ matched.url }}" class="db pv1 link blue hover-mid-gray">
+          <time class="fr silver ttu">{{ matched.date | date_to_string }}</time>
+          {{ matched.title }}
+        </a>
+      </li>
+      {% endif %}
+    {% endfor %}
+  </ol>
+</section>
+{% endfor %}

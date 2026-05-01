@@ -1,0 +1,20 @@
+# Hand-picked starter posts. Order matters — this is the reading order
+# a first-time visitor gets. Keep it short (5–7). Rotate when something
+# new deserves the shelf more than something here.
+#
+# slug: must match the filename slug used in the permalink (/posts/<slug>)
+# blurb: one line, author voice, no marketing speak
+intro: "Never been here before? Start with these. They're not the most popular — they're the ones I'd hand someone who asked what this site is."
+picks:
+  - slug: edmund-fitzgerald
+    blurb: "A 729-foot freighter, a lake that doesn't care, and the kind of history that sticks with you."
+  - slug: happy-birthday-grace-hopper
+    blurb: "The Navy admiral who made computers speak English. Debugged the original bug."
+  - slug: serverless-cost-optimization-for-cheapskates
+    blurb: "Your AWS bill is a personality test. Here's how to pass it."
+  - slug: sourdough-is-not-a-personality
+    blurb: "Please stop naming your starter."
+  - slug: grandmas-stuffing
+    blurb: "A story about stuffing. And the mailman. And wait what was I saying."
+  - slug: browser-games-with-claude
+    blurb: "Modern browsers are absurdly capable. I made Claude prove it."

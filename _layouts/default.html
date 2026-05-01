@@ -47,10 +47,11 @@
             {% endif %}
           </div>
         {% endif %}
-        <div style="font-family:Special Elite; font-size:large" class="markdown-body">
+        <div style="font-size:1.0625rem; line-height:1.65;" class="markdown-body">
           {{ content }}
         </div>
         {% if is_post %}
+          {% include sidenotes.html %}
           <div class="mt4 pt3 bt b--light-gray light-silver f6">
             {% if page.date %}
               Published on {{ page.date | date: "%B %d, %Y" }}

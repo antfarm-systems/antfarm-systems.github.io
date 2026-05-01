@@ -1,5 +1,10 @@
 @import "https://unpkg.com/tachyons@4.6.1/css/tachyons.min.css";
-@import "https://fonts.googleapis.com/css2?family=Special+Elite&display=swap";
+@import "https://fonts.googleapis.com/css2?family=Special+Elite&family=Atkinson+Hyperlegible:wght@400;700&display=swap";
+
+/* Body prose uses Atkinson Hyperlegible for readability.
+   Special Elite is reserved for the header title and anywhere
+   we explicitly opt back in (pull quotes, section labels). */
+body { font-family: "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
 
 .bg-super-white { background: #f9f9f9; }
 .top-50 { top: 50% }
@@ -35,3 +40,23 @@
   padding-left: 3.8rem;
 }
 /* end Markdown styles */
+
+/* --- Start Here shelf (homepage) --- */
+.start-here-item:last-child { border-bottom: 0 !important; }
+.start-here-item a:hover .f5 { text-decoration: underline; }
+
+/* --- Sidenotes ---
+   Opt-in via page.footnotes front matter. Renders a cleanly-styled
+   numbered list at the end of a post, distinct from body prose, with
+   hanging indents and a back-to-reference affordance. */
+.sidenotes { font-size: 0.95em; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; }
+.sidenotes ol { counter-reset: none; }
+.sidenote-item { padding-left: 2.75rem; text-indent: -2.75rem; line-height: 1.5; }
+.sidenote-num { display: inline-block; width: 2.25rem; text-align: right; margin-right: 0.5rem; }
+.sidenotes a { word-break: break-word; }
+
+/* Respect reduced-motion preferences for any future animations. */
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
+}
+

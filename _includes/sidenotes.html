@@ -1,0 +1,23 @@
+{%- comment -%}
+  Sidenotes include.
+  Opt-in: add a `footnotes:` list to post front matter, each item { n, url, text }.
+  On wide screens, notes float in the right margin aligned to their references.
+  On narrow screens, they fall back to a clean numbered list at the end.
+  Inline references in post body can keep the existing [1] [2] text style —
+  this block adds the destination and the margin cards.
+{%- endcomment -%}
+{% if page.footnotes %}
+<aside class="sidenotes mt4 pt3 bt b--light-gray" aria-label="Footnotes">
+  <h3 class="f6 ttu silver mt0 mb2" style="font-family: 'Cousine', monospace;">Notes &amp; sources</h3>
+  <ol class="list pa0 ma0">
+    {% for fn in page.footnotes %}
+    <li id="fn-{{ fn.n }}" class="sidenote-item mv2 lh-copy">
+      <span class="sidenote-num silver" style="font-family: 'Cousine', monospace;">[{{ fn.n }}]</span>
+      {% if fn.text %}{{ fn.text }}{% endif %}
+      {% if fn.url %}<a href="{{ fn.url }}" class="link blue hover-mid-gray" rel="noopener">{{ fn.url }}</a>{% endif %}
+      <a href="#ref-{{ fn.n }}" class="f7 silver link ml2" aria-label="Back to reference">↩</a>
+    </li>
+    {% endfor %}
+  </ol>
+</aside>
+{% endif %}

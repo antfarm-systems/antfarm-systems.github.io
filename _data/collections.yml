@@ -1,0 +1,53 @@
+# Editorial reading paths. Each one is hand-curated.
+# slugs must match post filename slugs (the part after the date).
+- id: aws-grudgingly
+  title: "AWS, grudgingly"
+  intro: "The cloud is fine. The cloud is also a tax on people who don't read the fine print. These are the posts where I read the fine print for you."
+  posts:
+    - serverless-cost-optimization-for-cheapskates
+    - aws-outage
+    - claude-built-my-serverless-app
+    - genai-code-review
+    - aws-cert-test-review
+    - update-culture-is-broken
+
+- id: history-enthusiastically
+  title: "Computing history, enthusiastically"
+  intro: "Every technology has ancestors. Some of them wore Navy uniforms and smashed assumptions for a living."
+  posts:
+    - happy-birthday-grace-hopper
+    - edmund-fitzgerald
+    - what-the-fuck-is-a-fax
+
+- id: food-family-weather
+  title: "Food, family, weather"
+  intro: "Not every post is about computers. Some are about stuffing, or DST, or being alive in a body that has opinions."
+  posts:
+    - grandmas-stuffing
+    - sourdough-is-not-a-personality
+    - fucking-tea
+    - dst-sucks
+    - fuck-dst
+    - paul-hollywood-and-his-haunted-blue-eyes
+    - Blessed-are-the-cheesemakers
+
+- id: browser-playground
+  title: "Things I made in a browser"
+  intro: "Modern browsers can do a staggering amount. These are small weird things I built to prove it to myself."
+  posts:
+    - browser-games-with-claude
+    - cryptogram-game
+    - aws-pricing-game
+    - aws-memory-match
+
+- id: rants
+  title: "Assorted yelling"
+  intro: "The house specialty. Affectionate profanity aimed at things that deserve it."
+  posts:
+    - hustle-culture-is-a-cult
+    - password-requirements-are-a-conspiracy
+    - bluetooth-is-magic-that-hates-you
+    - documentation-is-a-lie
+    - you-are-not-special
+    - million-billion-confusion
+    - what-a-billion-dollars-looks-like
