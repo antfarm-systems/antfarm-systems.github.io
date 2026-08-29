@@ -18,7 +18,7 @@ permalink: /collections/
       {% assign matched = site.posts | where_exp: "p", "p.url contains slug" | first %}
       {% if matched %}
       <li class="mv2">
-        <a href="{{ site.url }}{{ matched.url }}" class="db pv1 link blue hover-mid-gray">
+        <a href="{{ matched.url | relative_url }}" class="db pv1 link blue hover-mid-gray">
           <time class="fr silver ttu">{{ matched.date | date_to_string }}</time>
           {{ matched.title }}
         </a>

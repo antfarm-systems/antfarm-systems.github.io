@@ -9,8 +9,8 @@
   </head>
   <body class="lh-copy dark-gray pa0 f6 bg-super-white">
     <header class="tc mt4">
-      <a href="{{ site.url }}">
-        <img src="{{ site.url }}/images/ant.png" alt="Home" width="53" height="59">
+      <a href="{{ "/" | relative_url }}">
+        <img src="{{ "/images/ant.png" | relative_url }}" alt="Home" width="53" height="59">
       </a>
       <p style="font-size:40px;font-family: 'Cousine', monospace;">{{ site.title }}</p>
     </header>
@@ -18,7 +18,7 @@
       <nav class="bb b--light-gray pv4 tc" aria-label="Main">
         {% for link in site.links %}
           <a class="link blue hover-mid-gray mh2 pv1"
-             href="{% unless link.external %}{{ site.url }}{% endunless %}{{ link.url }}">
+             href="{% if link.external %}{{ link.url }}{% else %}{{ link.url | relative_url }}{% endif %}">
              {{ link.name }}
            </a>
         {% endfor %}
@@ -71,6 +71,6 @@
      <br>
      {% include license.html %}
     </footer>
-    <script defer src="{{ site.url }}/js/easter-eggs.js"></script>
+    <script defer src="{{ "/js/easter-eggs.js" | relative_url }}"></script>
   </body>
 </html>

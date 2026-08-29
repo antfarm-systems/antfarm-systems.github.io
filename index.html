@@ -1,14 +1,14 @@
 ---
 ---
 
-<p class="mt0 mb3 f6 silver i">New here? Start with the <a href="{{ site.url }}/best-of/" class="link blue hover-mid-gray">best of</a>.</p>
+<p class="mt0 mb3 f6 silver i">New here? Start with the <a href="{{ "/best-of/" | relative_url }}" class="link blue hover-mid-gray">best of</a>.</p>
 
 <h2 class="ttu f4 mt0 mb3 cb" style="font-family: 'Cousine', monospace;">Everything, newest first</h2>
 
 <ul class="list pa0">
   {% for post in site.posts %}
   <li class="mv2">
-    <a href="{{ site.url }}{{ post.url }}" class="db pv1 link blue hover-mid-gray">
+    <a href="{{ post.url | relative_url }}" class="db pv1 link blue hover-mid-gray">
       <time class="fr silver ttu">{{ post.date | date_to_string }} </time>
       {{ post.title }}
     </a>

@@ -13,7 +13,7 @@ permalink: /best-of/
     {% assign matched = site.posts | where_exp: "p", "p.url contains pick.slug" | first %}
     {% if matched %}
     <li class="mv3 pb3 bb b--light-gray start-here-item">
-      <a href="{{ site.url }}{{ matched.url }}" class="db link dark-gray hover-mid-gray">
+      <a href="{{ matched.url | relative_url }}" class="db link dark-gray hover-mid-gray">
         <div class="f5 fw6 mb1" style="font-family: 'Cousine', monospace;">{{ matched.title }}</div>
         <div class="lh-copy mid-gray">{{ pick.blurb }}</div>
       </a>
