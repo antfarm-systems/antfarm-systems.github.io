@@ -3,13 +3,14 @@ title:            "AntFarm Systems"
 description:      "This is an opinion site."
 url:              https://antfarm.systems # Site url, without a slash at the end.
 signoff:          "The AntFarm" # Fallback byline; per-post bylines live in _data/authors.yml
-facebook_appid:   # APP ID for like button, remove from /_includes/share.html if unwanted.
-google_analytics: G-DMG7WF4SSG # Set tracking, remove from /javascripts/basic.js if unwanted.
-share:            true # Turn on twitter and facebook share buttons
+google_analytics: G-DMG7WF4SSG # Set tracking, remove the gtag block in /_includes/head.html if unwanted.
 
 links:
   - name:         Posts
     url:          /
+    external:     false
+  - name:         Best of
+    url:          /best-of/
     external:     false
   - name:         Collections
     url:          /collections/
