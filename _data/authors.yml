@@ -1,0 +1,9 @@
+# Post bylines. Set `author:` in a post's front matter to one of these keys.
+# Default is `antfarm` (see `defaults:` in _config.yml) — add `author: luis` to
+# posts you wrote yourself. Leave `url` blank to render the name unlinked.
+luis:
+  name: "Luis"
+  url: "https://luiscerezo.org/about"
+antfarm:
+  name: "The AntFarm"
+  url: ""

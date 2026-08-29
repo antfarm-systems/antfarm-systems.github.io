@@ -1,6 +1,25 @@
+{%- comment -%}
+  Byline. `author:` in post front matter is a key from _data/authors.yml
+  (defaults to "antfarm" via _config.yml). Lookup is case-insensitive, so
+  `Luis` and `luis` both match — keep registry keys lowercase. An unrecognized
+  value renders as plain text, so `author: "Some Guest"` works as a one-off.
+{%- endcomment -%}
+{%- assign author_key = page.author | downcase -%}
+{%- assign author = site.data.authors[author_key] -%}
+{%- if author -%}
+  {%- assign byline_name = author.name -%}
+  {%- assign byline_url = author.url -%}
+{%- else -%}
+  {%- assign byline_name = page.author | default: site.signoff -%}
+  {%- assign byline_url = "" -%}
+{%- endif -%}
 <p class="mt4">
   <br>
-  {{ site.signoff }}
+  {% if byline_url != "" %}
+    <a class="link blue hover-mid-gray" href="{{ byline_url }}" rel="author noopener">{{ byline_name }}</a>
+  {% else %}
+    {{ byline_name }}
+  {% endif %}
   <span class="silver">{{ page.date | date: "at %H:%M" }}</span>
 </p>
 <img src="{{ site.url }}/images/scribble3.png" alt="scribble" />

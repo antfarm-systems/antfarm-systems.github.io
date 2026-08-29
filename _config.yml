@@ -2,7 +2,7 @@
 title:            "AntFarm Systems"
 description:      "This is an opinion site."
 url:              https://antfarm.systems # Site url, without a slash at the end.
-signoff:          "The AntFarm" # Your name
+signoff:          "The AntFarm" # Fallback byline; per-post bylines live in _data/authors.yml
 facebook_appid:   # APP ID for like button, remove from /_includes/share.html if unwanted.
 google_analytics: G-DMG7WF4SSG # Set tracking, remove from /javascripts/basic.js if unwanted.
 share:            true # Turn on twitter and facebook share buttons
@@ -23,6 +23,7 @@ permalink:        /posts/:title
 defaults:
   - values:
       layout: "default"
+      author: "antfarm" # Byline key from _data/authors.yml. Use "luis" for posts you wrote.
 
 include:
   - "*.txt"
