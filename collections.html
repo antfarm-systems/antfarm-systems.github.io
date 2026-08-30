@@ -28,3 +28,28 @@ permalink: /collections/
   </ol>
 </section>
 {% endfor %}
+
+{% comment %}
+  The swipe file builds itself: every post with `type: quote` lands here, so
+  there's no slug list in _data/collections.yml to keep in sync.
+{% endcomment %}
+{% assign quotes = site.posts | where: "type", "quote" %}
+{% if quotes.size > 0 %}
+<section class="mb5 pb4 bb b--light-gray" id="swipe-file" aria-labelledby="h-swipe-file">
+  <h2 id="h-swipe-file" class="ttu f3 mt0 mb2 cb" style="font-family: 'Cousine', monospace;">The swipe file</h2>
+  <p class="mt0 mb3 dark-gray lh-copy">
+    Lines I copied into a paper notebook because they hit me in some way. Not
+    my words — that's the point.
+  </p>
+  <ol class="list pa0 ma0">
+    {% for post in quotes %}
+    <li class="mv2">
+      <a href="{{ post.url | relative_url }}" class="db pv1 link blue hover-mid-gray">
+        <time class="fr silver ttu">{{ post.date | date_to_string }}</time>
+        {{ post.title }}{% if post.quote_source %} <span class="silver">&mdash; {{ post.quote_source }}</span>{% endif %}
+      </a>
+    </li>
+    {% endfor %}
+  </ol>
+</section>
+{% endif %}
