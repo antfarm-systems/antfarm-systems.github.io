@@ -45,6 +45,34 @@ body { font-family: "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI
 .start-here-item:last-child { border-bottom: 0 !important; }
 .start-here-item a:hover .f5 { text-decoration: underline; }
 
+/* --- Quote posts ---
+   Opt in with `type: quote` in a post's front matter. Nothing but the quote,
+   set large in Special Elite — the beat-up Adler typewriter look. The faint
+   text-shadow fakes a double-struck key; the hair-thin rotation fakes paper
+   fed in slightly crooked. */
+.quote-post {
+  font-family: "Special Elite", "Courier New", Courier, monospace;
+  transform: rotate(-0.3deg);
+}
+.quote-post p {
+  font-size: 1.9rem;
+  line-height: 1.45;
+  letter-spacing: 0.005em;
+  margin: 0 0 1.5rem;
+  text-wrap: balance;
+  text-shadow: 0.4px 0.4px 0 rgba(0, 0, 0, 0.25);
+}
+@media screen and (min-width: 30em) {
+  .quote-post p { font-size: 2.6rem; line-height: 1.4; }
+}
+.quote-attr {
+  font-family: "Special Elite", "Courier New", Courier, monospace;
+  font-size: 1.0625rem;
+  color: #777;
+  text-align: right;
+  transform: rotate(-0.3deg);
+}
+
 /* --- Sidenotes ---
    Opt-in via page.footnotes front matter. Renders a cleanly-styled
    numbered list at the end of a post, distinct from body prose, with

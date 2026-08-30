@@ -1,4 +1,5 @@
 {% assign is_post = page.date %}
+{% assign is_quote = false %}{% if page.type == "quote" %}{% assign is_quote = true %}{% endif %}
 <!doctype html>
 <html lang="en">
   <head>
@@ -28,7 +29,7 @@
         {% if page.title %}
           <div class="mb4">
             {% if page.date %}<div class="fw600 light-silver mt1">{{ page.date | date_to_string }}</div>{% endif %}
-            <h1 class="ttu f3 mt0 lh-title cb mb2">
+            <h1 class="{% if is_quote %}f6 ttu tracked light-silver{% else %}ttu f3 cb{% endif %} mt0 lh-title mb2">
               {% if is_post %}
               {% endif %}
               {{ page.title }}
@@ -42,9 +43,12 @@
             {% endif %}
           </div>
         {% endif %}
-        <div style="font-size:1.0625rem; line-height:1.65;" class="markdown-body">
+        <div style="font-size:1.0625rem; line-height:1.65;" class="markdown-body{% if is_quote %} quote-post{% endif %}">
           {{ content }}
         </div>
+        {% if is_quote and page.quote_source %}
+          <p class="quote-attr mt0 mb0">&mdash; {{ page.quote_source }}</p>
+        {% endif %}
         {% if is_post %}
           {% include sidenotes.html %}
           <div class="mt4 pt3 bt b--light-gray light-silver f6">
