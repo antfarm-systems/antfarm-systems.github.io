@@ -1,6 +1,7 @@
 ---
 title: why do faxes still exist?
 date: 2025-05-27
+author: luis
 ---
 
 I'm stuck in the hell of pre-authorization of a prescription. In the perfect American Ferengi healthcare model, they make as difficult as possible to get what you pay for. 

@@ -2,6 +2,7 @@
 title: GenAI code review
 date: 2025-10-04
 tags: [ai, development, meta]
+author: luis
 ---
 
 I asked Amazon Q (Claude Sonnet 4.5) to do a deep dive review of the code that powers this website.

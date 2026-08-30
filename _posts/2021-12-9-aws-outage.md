@@ -1,6 +1,7 @@
 ---
 title: aws outages PIR and Toxicity
 date: 2021-12-09 08:27:22
+author: luis
 ---
 
 Just a note about the outage in aws region us-east-1 the other day. A lot of teams are doing reviews of their Business Continuity Plans, Having [PIR](https://www.google.com/search?q=post+incident+reviews) (RCAs) and looking for gaps in their infrastructure design. If your approach is to ***blame*** the developers, operations, SREs and other people working on your system, 

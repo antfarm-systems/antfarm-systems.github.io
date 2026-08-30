@@ -1,6 +1,7 @@
 ---
 title: Can Bard talk SEO pretty?
 date: 2023-05-21 08:03:03 -007
+author: luis
 ---
 
 This post was created using bard. Currently this site has nearly zero traffic. let's see what happens when we ask Google to write google seo optimized content. This is probly too meta and the response is pretty shit.

@@ -1,6 +1,7 @@
 ---
 title: Bard is high as fuck - part 2
 date: 2023-05-19
+author: luis
 ---
 
 
