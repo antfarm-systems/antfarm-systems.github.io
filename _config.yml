@@ -15,7 +15,7 @@ links:
   - name:         Collections
     url:          /collections/
     external:     false
-  - name:         About This Page
+  - name:         About The AntFarm
     url:          /about
     external:     false
 # ------------ CONFIGURABLE END ------------
