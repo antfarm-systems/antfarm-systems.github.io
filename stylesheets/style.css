@@ -34,10 +34,72 @@ body { font-family: "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI
   border: 0;
   border-bottom: 1px dotted #CCC;
 }
+/* Inline pull quotes (`>` in a post). Same typewriter voice as `type: quote`
+   posts, dialed down to live inside prose: a step up from body text, not a
+   billboard. Sized so the multi-paragraph quotes in the older posts still
+   read comfortably. */
 .markdown-body blockquote {
-  background: #f9f9f9;
-  border-left: .2rem solid #ccc;
+  position: relative;
+  font-family: "Special Elite", "Courier New", Courier, monospace;
+  font-size: 1.2rem;
+  line-height: 1.55;
+  color: #333;
+  background: #faf8f4;
+  border-left: .2rem solid #b7b0a4;
   padding-left: 3.8rem;
+  transform: rotate(-0.15deg);
+}
+/* Oversized quote marks, tucked into the existing 4rem side padding so they
+   sit in the gutter and never reflow the text. The closing mark rides the
+   bottom-right gutter, clear of any <cite> line (which right-aligns to the
+   content box edge, 4rem further in). */
+.markdown-body blockquote::before,
+.markdown-body blockquote::after {
+  position: absolute;
+  font-size: 2.6rem;
+  line-height: 1;
+  color: #cec7b9;
+}
+.markdown-body blockquote::before {
+  content: "\201C";
+  left: 1rem;
+  top: .3rem;
+}
+.markdown-body blockquote::after {
+  content: "\201D";
+  right: 1rem;
+  bottom: .2rem;
+}
+.markdown-body blockquote p { margin: 0; }
+.markdown-body blockquote p + p { margin-top: .8rem; }
+/* Optional attribution: `> <cite>Rick Rubin</cite>` on its own line. */
+.markdown-body blockquote cite {
+  display: block;
+  margin-top: .7rem;
+  font-size: .95rem;
+  font-style: normal;
+  color: #777;
+  text-align: right;
+}
+/* Narrow screens: `main` drops to 2rem of padding (pa4), so the -4rem bleed
+   set above puts the quote 2rem outside main, where overflow-hidden clips the
+   border and the quote mark. Rein it in below tachyons' 30em breakpoint. Must
+   stay after the rules above -- equal specificity, so source order decides. */
+@media screen and (max-width: 29.99em) {
+  .markdown-body > blockquote {
+    margin-left: -2rem;
+    margin-right: -2rem;
+    padding-left: 2.5rem;
+    padding-right: 2.2rem;
+    font-size: 1.1rem;
+  }
+  /* Smaller marks, tighter to the edges, so both still fit in their gutters at
+     phone width. The 2.2rem right padding is the gutter the closing mark needs
+     -- shrink it and the mark lands on the text. */
+  .markdown-body blockquote::before,
+  .markdown-body blockquote::after { font-size: 2rem; }
+  .markdown-body blockquote::before { left: .45rem; }
+  .markdown-body blockquote::after { right: .45rem; }
 }
 /* end Markdown styles */
 
