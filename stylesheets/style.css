@@ -145,6 +145,87 @@ body { font-family: "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI
 .sidenote-num { display: inline-block; width: 2.25rem; text-align: right; margin-right: 0.5rem; }
 .sidenotes a { word-break: break-word; }
 
+/* --- Dark mode: you are underground ---
+   The colony conceit taken literally. Light mode is the surface; dark mode is
+   the inside of the farm, so the palette is soil rather than the usual
+   gray-on-black, the page gets dirt grain, and the content card reads as a
+   chamber carved out of it. Tunnels and the ants that walk them are dug by
+   js/easter-eggs.js §6 — everything here works with JavaScript off.
+
+   Colors are overrides of the tachyons utility classes the templates use.
+   Tachyons is @imported at the top of this file, so these plain-class rules
+   win on source order at equal specificity. */
+:root { color-scheme: light dark; }
+
+@media (prefers-color-scheme: dark) {
+  /* Soil, with fractal-noise grain so it isn't a flat void. */
+  .bg-super-white {
+    background-color: #14100b;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='d'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23d)' opacity='0.045'/%3E%3C/svg%3E");
+  }
+  /* The chamber. Lighter than the soil around it, with a dug-out edge. */
+  .bg-white {
+    background: #1e1711;
+    box-shadow: 0 0 0 1px #2a2117, 0 0 34px 6px rgba(0, 0, 0, .55) inset;
+  }
+  .bg-light-gray { background: #2c2318; color: #d6cbb8; }
+
+  .dark-gray { color: #e8e0d0; }
+  .mid-gray { color: #b8ad9b; }
+  .gray { color: #a39885; }
+  .silver { color: #9d9384; }
+  .light-silver { color: #8a8070; }
+  .b--light-gray { border-color: #3a2f22; }
+
+  .blue { color: #7cb3f2; }
+  .light-blue { color: #6b5b45; }
+  .hover-mid-gray:hover { color: #d8cebc; }
+  .hover-silver:hover { color: #9d9384; }
+  /* line.png is a dark scribble — invisible down here. Wavy underline instead. */
+  .link:hover {
+    background: none;
+    text-decoration: underline wavy;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+  }
+
+  .markdown-body a { color: #7cb3f2; }
+  .markdown-body > hr { border-bottom-color: #3a2f22; }
+  .markdown-body blockquote {
+    color: #ded4c2;
+    background: #241c14;
+    border-left-color: #6b5b45;
+  }
+  .markdown-body blockquote::before,
+  .markdown-body blockquote::after { color: #4a3d2c; }
+  .markdown-body blockquote cite { color: #9a8f7d; }
+
+  /* Code stays on parchment — a lit workbench in a dark room. The rouge
+     token colors in syntax.css are tuned for a light background and would be
+     unreadable inverted. */
+  .highlighter-rouge { background: #f2ece1; color: #2a2318; }
+  .markdown-body .highlighter-rouge { border-radius: 2px; }
+
+  .quote-post p { text-shadow: 0.4px 0.4px 0 rgba(255, 255, 255, .16); }
+  .quote-attr { color: #9a8f7d; }
+
+  /* ant.png is a black ant on opaque white. Inverting makes it a pale ant on
+     black; screen then drops the black, so it glows instead of sitting in a
+     white box. */
+  header img {
+    filter: invert(1);
+    mix-blend-mode: screen;
+  }
+  /* Post images are photographs — knock the glare back a little, don't invert. */
+  .markdown-body img { filter: brightness(.88) saturate(.94); }
+  /* The signoff scribble is dark line art on transparent, so it disappears into
+     the soil. Inverted it reads like chalk. Must come after the rule above. */
+  img[src*="scribble"] { filter: invert(1) brightness(.85); mix-blend-mode: screen; }
+  /* §12 hangs a bright tan coffee stain on posts over two years old. Up top
+     that's a stain; down here it should be a damp patch, not a spotlight. */
+  main > img[src*="coffee-stain"] { filter: brightness(.32) contrast(1.15); opacity: .5; }
+}
+
 /* Respect reduced-motion preferences for any future animations. */
 @media (prefers-reduced-motion: reduce) {
   * { animation: none !important; transition: none !important; }
