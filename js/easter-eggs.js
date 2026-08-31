@@ -251,6 +251,150 @@
   })();
 
   // ──────────────────────────────────────────────
+  // 5. WORD THEFT
+  // ──────────────────────────────────────────────
+  // Double-click a word in a post: two ants walk up, drag it off the line,
+  // lose interest, and drop it back where they found it.
+  //
+  // Deliberately exclusive with the confetti in #3. A double-click fires
+  // mouseup (which #3 listens on, with the word already selected) before it
+  // fires dblclick, so without a guard a swear would get glitter AND a theft
+  // on the same gesture. Both tests use profanityPattern, so exactly one of
+  // them can ever claim a word: spicy words get confetti, the rest get stolen.
+  var thieving = false;
+
+  document.addEventListener('dblclick', function () {
+    if (thieving) return;
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    var body = document.querySelector('.markdown-body');
+    if (!body) return;
+
+    var sel = window.getSelection();
+    if (!sel || !sel.rangeCount) return;
+
+    var raw = sel.toString();
+    var word = raw.replace(/\s+$/, ''); // Chrome's double-click takes the trailing space too
+    if (!/^[A-Za-z0-9'’-]{2,24}$/.test(word)) return; // one ordinary word, nothing else
+    if (profanityPattern.test(word)) return;               // #3 has dibs on this one
+
+    var range = sel.getRangeAt(0).cloneRange();
+    if (!body.contains(range.commonAncestorContainer)) return; // post text only, not the nav
+    if (raw.length !== word.length) {
+      try {
+        range.setEnd(range.endContainer, range.endOffset - (raw.length - word.length));
+      } catch (e) {
+        return;
+      }
+    }
+
+    var span = document.createElement('span');
+    span.className = 'af-stolen';
+    // inline-block because transforms don't apply to inline non-replaced boxes.
+    span.style.cssText = 'display:inline-block;will-change:transform;';
+    try {
+      range.surroundContents(span);
+    } catch (e) {
+      return; // selection straddled markup; not worth forcing
+    }
+    sel.removeAllRanges(); // otherwise it reads as a highlight glitch, not theft
+    stealWord(span);
+  });
+
+  function easeInOut(p) {
+    p = p < 0 ? 0 : (p > 1 ? 1 : p);
+    return p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2;
+  }
+
+  function spawnThief(rect, frac, offset) {
+    var ant = document.createElement('div');
+    ant.className = 'af-thief';
+    ant.textContent = '🐜';
+    ant.setAttribute('aria-hidden', 'true');
+    // Absolute, not fixed: in document space the ants scroll with the word
+    // they're carrying instead of sliding off it.
+    ant.style.cssText = 'position:absolute;z-index:99994;font-size:14px;pointer-events:none;opacity:0;';
+    var gx = rect.left + window.pageXOffset + rect.width * frac - 7;
+    var gy = rect.bottom + window.pageYOffset - 4;
+    var sx = gx + offset;
+    var sy = gy + 46;
+    ant.style.left = sx + 'px';
+    ant.style.top = sy + 'px';
+    if (offset > 0) ant.style.transform = 'scaleX(-1)';
+    document.body.appendChild(ant);
+    return { el: ant, sx: sx, sy: sy, gx: gx, gy: gy, wob: Math.random() * 6.28 };
+  }
+
+  function unwrapWord(span) {
+    var parent = span.parentNode;
+    if (!parent) return;
+    while (span.firstChild) parent.insertBefore(span.firstChild, span);
+    parent.removeChild(span);
+    if (parent.normalize) parent.normalize(); // re-heal the split text node
+  }
+
+  function stealWord(span) {
+    thieving = true;
+    var rect = span.getBoundingClientRect();
+    var thieves = [spawnThief(rect, 0.25, -34), spawnThief(rect, 0.75, 34)];
+
+    // Far enough that the word is clearly gone from its line, and a random
+    // sideways direction so two thefts in a row don't look identical. The
+    // tilt leans whichever way it's being dragged.
+    var dir = Math.random() < 0.5 ? -1 : 1;
+    var DRIFT_X = 58 * dir, DRIFT_Y = 150, TILT = 15 * dir;
+    // seconds: walk up, carry off, hold, put it back, wander away
+    var A = 0.45, C = 1.25, H = 0.18, R = 0.55, OUT = 0.45;
+    var t = 0, last = performance.now();
+
+    requestAnimationFrame(function step(now) {
+      var dt = Math.min((now - last) / 1000, 0.05);
+      last = now;
+      t += dt;
+
+      var wx = 0, wy = 0, tilt = 0, grip = 0, antOp = 1, antDrift = 0, p;
+
+      if (t < A) {
+        grip = easeInOut(t / A);
+        antOp = Math.min(1, t / (A * 0.6));
+      } else if (t < A + C) {
+        grip = 1;
+        p = easeInOut((t - A) / C);
+        wx = DRIFT_X * p; wy = DRIFT_Y * p; tilt = TILT * p;
+      } else if (t < A + C + H) {
+        grip = 1;
+        wx = DRIFT_X; wy = DRIFT_Y; tilt = TILT;
+      } else if (t < A + C + H + R) {
+        grip = 1;
+        p = 1 - easeInOut((t - A - C - H) / R);
+        wx = DRIFT_X * p; wy = DRIFT_Y * p; tilt = TILT * p;
+      } else if (t < A + C + H + R + OUT) {
+        grip = 1;
+        p = (t - A - C - H - R) / OUT;
+        antOp = 1 - p;
+        antDrift = 44 * p;
+      } else {
+        for (var k = 0; k < thieves.length; k++) thieves[k].el.remove();
+        unwrapWord(span);
+        thieving = false;
+        return;
+      }
+
+      span.style.transform = 'translate(' + wx.toFixed(2) + 'px,' + wy.toFixed(2) +
+        'px) rotate(' + tilt.toFixed(2) + 'deg)';
+
+      for (var i = 0; i < thieves.length; i++) {
+        var th = thieves[i];
+        th.wob += dt * 9;
+        th.el.style.left = (th.sx + (th.gx - th.sx) * grip + wx + Math.sin(th.wob) * 0.7) + 'px';
+        th.el.style.top = (th.sy + (th.gy - th.sy) * grip + wy + antDrift) + 'px';
+        th.el.style.opacity = antOp;
+      }
+      requestAnimationFrame(step);
+    });
+  }
+
+  // ──────────────────────────────────────────────
   // 7. ANT SCROLL PROGRESS BAR
   // ──────────────────────────────────────────────
   var progressBar = document.createElement('div');
