@@ -37,7 +37,6 @@
   posts:
     - browser-games-with-claude
     - cryptogram-game
-    - aws-pricing-game
     - aws-memory-match
 
 - id: rants
