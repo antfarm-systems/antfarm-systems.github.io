@@ -28,7 +28,8 @@ layout: null
   Last built ............ {{ site.time | date: "%Y-%m-%d" }}
   Typefaces ............. Special Elite, Atkinson Hyperlegible, Cousine
   CSS ................... Tachyons, plus hand-written stubbornness
-  JavaScript ............ ~6KB, zero dependencies, no framework
+  JavaScript ............ ~11KB gzipped, zero dependencies, no framework,
+                          unminified so you can read it
   Analytics ............. Google, because I'm curious, not because
                           I'm selling you to anybody
   Warrant canary ........ /about — last chirped {{ site.data.canary.date }}
@@ -40,7 +41,8 @@ layout: null
   is only awake once a year. One shows up when you get a page wrong.
   One is counting your profanity and billing you for it.
 
-  Open the console. We left something there for people like you.
+  One of us lives in the console. Open it and type antfarm.help().
+  We left it there for people like you.
 
 /* THANKS */
 

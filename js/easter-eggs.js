@@ -1,6 +1,9 @@
 /**
  * antfarm.systems easter eggs
- * ~2.5KB minified. Zero dependencies. Deferred loading.
+ * ~9KB gzipped over the wire, unminified on purpose so it can be read.
+ * Zero dependencies. Deferred loading.
+ *
+ * Console entry point: antfarm.help() — see §13.
  */
 (function () {
   'use strict';
@@ -23,8 +26,10 @@
     }
   });
 
-  function unleashAnts() {
-    var count = 40;
+  function unleashAnts(count) {
+    // Console callers (§13) can ask for a different swarm; 200 is where my
+    // laptop starts to sound like it's thinking about it.
+    count = Math.max(1, Math.min(Math.floor(count) || 40, 200));
     var ants = [];
     for (var i = 0; i < count; i++) {
       var ant = document.createElement('div');
@@ -83,6 +88,7 @@
     '       d b\n\n' +
     '  You\'re inspecting a blog.\n' +
     '  Go touch grass.\n\n' +
+    '  Or don\'t: antfarm.help()\n\n' +
     '  antfarm.systems',
     'font-family:monospace;font-size:13px;color:#357edd;'
   );
@@ -152,27 +158,33 @@
   // ──────────────────────────────────────────────
   // She was born Dec 9, 1906. The moth is the one taped into the Mark II
   // logbook on Sept 9, 1947: "First actual case of bug being found."
-  // Add ?moth or #moth to any URL to summon it on the other 364 days.
+  // Add ?moth or #moth to any URL to summon it on the other 364 days,
+  // or call antfarm.moth() from the console (§13).
   (function () {
     var today = new Date();
     var forced = location.search.indexOf('moth') > -1 || location.hash === '#moth';
-    if (!forced && !(today.getMonth() === 11 && today.getDate() === 9)) return;
+    if (forced || (today.getMonth() === 11 && today.getDate() === 9)) summonMoth();
+  })();
 
+  function summonMoth() {
     var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    var style = document.createElement('style');
-    style.textContent =
-      '@keyframes af-flutter{0%,100%{transform:scaleX(1)}50%{transform:scaleX(.5)}}' +
-      '.af-moth{position:fixed;z-index:99995;line-height:0;' +
-        'filter:drop-shadow(0 1px 2px rgba(0,0,0,.28))}' +
-      '.af-moth-wings{transform-box:fill-box;transform-origin:center;' +
-        'animation:af-flutter .17s ease-in-out infinite}' +
-      '.af-moth-rest .af-moth-wings{animation:none;transform:scaleX(.84)}' +
-      '.af-moth-note{position:fixed;z-index:99995;max-width:15rem;' +
-        'font-family:Cousine,monospace;font-size:11px;line-height:1.55;color:#5b5344;' +
-        'background:rgba(255,255,255,.95);border:1px solid #ddd6c6;border-radius:3px;' +
-        'padding:7px 9px;opacity:0;transition:opacity .7s;pointer-events:none}';
-    document.head.appendChild(style);
+    if (!document.getElementById('af-moth-css')) {
+      var style = document.createElement('style');
+      style.id = 'af-moth-css'; // console callers can summon a second moth; one stylesheet is enough
+      style.textContent =
+        '@keyframes af-flutter{0%,100%{transform:scaleX(1)}50%{transform:scaleX(.5)}}' +
+        '.af-moth{position:fixed;z-index:99995;line-height:0;' +
+          'filter:drop-shadow(0 1px 2px rgba(0,0,0,.28))}' +
+        '.af-moth-wings{transform-box:fill-box;transform-origin:center;' +
+          'animation:af-flutter .17s ease-in-out infinite}' +
+        '.af-moth-rest .af-moth-wings{animation:none;transform:scaleX(.84)}' +
+        '.af-moth-note{position:fixed;z-index:99995;max-width:15rem;' +
+          'font-family:Cousine,monospace;font-size:11px;line-height:1.55;color:#5b5344;' +
+          'background:rgba(255,255,255,.95);border:1px solid #ddd6c6;border-radius:3px;' +
+          'padding:7px 9px;opacity:0;transition:opacity .7s;pointer-events:none}';
+      document.head.appendChild(style);
+    }
 
     var moth = document.createElement('a');
     moth.className = 'af-moth';
@@ -248,7 +260,7 @@
       setTimeout(function () { note.style.opacity = '0'; }, 7000);
       setTimeout(function () { note.remove(); }, 7800);
     }
-  })();
+  }
 
   // ──────────────────────────────────────────────
   // 5. WORD THEFT
@@ -541,6 +553,170 @@
         main.appendChild(stain);
       }
     }
+  }
+
+  // ──────────────────────────────────────────────
+  // 13. CONSOLE API
+  // ──────────────────────────────────────────────
+  // §2 tells you to go touch grass. This is for the people who don't, and
+  // it's the thing /humans.txt promises is waiting down here.
+  //
+  // Every command returns an ant instead of `undefined`, because the console
+  // echoes the return value either way and one of those is funnier.
+  var ANT = '🐜';
+  var MONO = 'font-family:Cousine,monospace;font-size:12px;line-height:1.7;';
+  var BLUE = MONO + 'color:#357edd;';
+  var DIM = MONO + 'color:#999;';
+
+  function help() {
+    console.log(
+      '%c  antfarm.systems, from the inside\n' +
+      '%c' +
+      '  antfarm.help()      this\n' +
+      '  antfarm.ants(n)     release the colony (default 40, max 200)\n' +
+      '  antfarm.steal()     ants haul a word out of this page\n' +
+      '  antfarm.confetti()  glitter, no swearing required\n' +
+      '  antfarm.moth()      Grace Hopper\'s moth, any day of the year\n' +
+      '  antfarm.hopper()    a better line than anything I\'ve written\n' +
+      '  antfarm.stats()     what this page is made of\n' +
+      '  antfarm.eggs()      every egg on the site, spoiled\n' +
+      '%c\n' +
+      '  The Konami code still works if you\'d rather use your hands:\n' +
+      '  ↑ ↑ ↓ ↓ ← → ← → B A\n',
+      MONO + 'font-size:13px;font-weight:bold;color:#357edd;', BLUE, DIM
+    );
+    return ANT;
+  }
+
+  // Pick a word out of the post and hand it to the same thieves as §5.
+  function stealRandomWord() {
+    if (thieving) {
+      console.log('%c  The ants already have their hands full. Wait for them.', DIM);
+      return null;
+    }
+    var body = document.querySelector('.markdown-body');
+    if (!body) {
+      console.log('%c  Nothing to steal — this page has no post text.', DIM);
+      return null;
+    }
+
+    var walker = document.createTreeWalker(body, NodeFilter.SHOW_TEXT, null, false);
+    var all = [], onScreen = [], node, host, rect;
+    while ((node = walker.nextNode())) {
+      if (!/[A-Za-z]{4,}/.test(node.nodeValue)) continue;
+      host = node.parentNode;
+      // Code, headings and an in-progress theft are load-bearing. Leave them.
+      if (host.closest && host.closest('pre, code, h1, h2, h3, .af-stolen')) continue;
+      all.push(node);
+      rect = host.getBoundingClientRect();
+      if (rect.top > 40 && rect.bottom < window.innerHeight - 40) onScreen.push(node);
+    }
+
+    // Stealing a word you can't see is just a stall, so prefer the viewport.
+    var pool = onScreen.length ? onScreen : all;
+    for (var tries = 0; tries < 12 && pool.length; tries++) {
+      var target = pool[Math.floor(Math.random() * pool.length)];
+      var words = [], re = /[A-Za-z][A-Za-z'’-]{3,15}/g, m;
+      while ((m = re.exec(target.nodeValue))) {
+        if (!profanityPattern.test(m[0])) words.push(m); // §3's words, not the ants' to take
+      }
+      if (!words.length) continue;
+
+      var pick = words[Math.floor(Math.random() * words.length)];
+      var range = document.createRange();
+      range.setStart(target, pick.index);
+      range.setEnd(target, pick.index + pick[0].length);
+
+      var span = document.createElement('span');
+      span.className = 'af-stolen';
+      span.style.cssText = 'display:inline-block;will-change:transform;';
+      try {
+        range.surroundContents(span);
+      } catch (e) {
+        continue; // straddled some markup; try a different word
+      }
+      stealWord(span);
+      console.log('%c  ' + ANT + ' They\'re taking "' + pick[0] + '". They\'ll bring it back.', BLUE);
+      return pick[0];
+    }
+
+    console.log('%c  The ants looked, and found nothing worth carrying.', DIM);
+    return null;
+  }
+
+  function pageStats() {
+    var body = document.querySelector('.markdown-body');
+    var text = body ? (body.textContent || '') : '';
+    var words = (text.match(/\S+/g) || []).length;
+    var swears = countSwears();
+    var out = {
+      words: words,
+      // No reading-time estimate. /humans.txt takes a position on that.
+      paragraphs: document.querySelectorAll('.markdown-body p').length,
+      swears: swears,
+      owedToTheSwearJar: '$' + (swears * 0.25).toFixed(2),
+      links: document.querySelectorAll('.markdown-body a').length
+    };
+    var dated = document.querySelector('main[data-post-date]');
+    if (dated) {
+      var published = dated.getAttribute('data-post-date');
+      var days = Math.floor((Date.now() - new Date(published).getTime()) / 86400000);
+      out.published = published;
+      out.daysOld = days;
+      // Mirrors §12 so the number matches the yellowing you can actually see.
+      out.yellowing = days > 180
+        ? 'sepia(' + Math.min((days - 180) / 700, 0.3).toFixed(2) + ')' + (days > 730 ? ' + coffee stain' : '')
+        : 'none';
+    }
+    return out;
+  }
+
+  function eggs() {
+    console.table([
+      { egg: 'Konami code',        where: 'anywhere',        how: '↑↑↓↓←→←→BA — the colony marches up the page' },
+      { egg: 'Console art',        where: 'anywhere',        how: 'you found this one already' },
+      { egg: 'Profanity confetti', where: 'any post',        how: 'select a swear' },
+      { egg: 'Word theft',         where: 'any post',        how: 'double-click a word — swears excluded, they belong to the confetti' },
+      { egg: "Hopper's moth",      where: 'anywhere',        how: 'December 9, or add ?moth to any URL' },
+      { egg: 'Scroll ant',         where: 'anywhere',        how: 'the bar at the top of the page is being carried' },
+      { egg: 'Swear jar',          where: 'spicy posts',     how: 'in the footer, at 25¢ a word. Click it' },
+      { egg: 'Idle colony',        where: 'anywhere',        how: 'take your hands off the mouse for 30 seconds' },
+      { egg: 'Post aging',         where: 'old posts',       how: 'sepia after 6 months, coffee stain after 2 years' },
+      { egg: 'Ants eat the 404',   where: '/anything-fake',  how: 'they carry the graphic off the page' },
+      { egg: 'humans.txt',         where: '/humans.txt',     how: 'the colophon' },
+      { egg: 'This',               where: 'the console',     how: 'antfarm.help()' }
+    ]);
+    return ANT;
+  }
+
+  function hopper() {
+    console.log(
+      '%c  "The most dangerous phrase in the language is:\n' +
+      '   we\'ve always done it this way."\n' +
+      '%c  — Grace Hopper, Rear Admiral, USN\n' +
+      '  antfarm.systems/posts/happy-birthday-grace-hopper',
+      BLUE, DIM
+    );
+    return ANT;
+  }
+
+  // Don't clobber anything that got here first.
+  if (!window.antfarm) {
+    window.antfarm = {
+      help: help,
+      ants: function (n) { unleashAnts(n); return ANT; },
+      steal: stealRandomWord,
+      confetti: function () {
+        burstConfetti(window.innerWidth / 2, window.innerHeight / 3);
+        return ANT;
+      },
+      // Asking for the moth out loud outranks prefers-reduced-motion the same
+      // way ?moth does — it still settles instead of fluttering if you've set it.
+      moth: function () { summonMoth(); return ANT; },
+      hopper: hopper,
+      stats: pageStats,
+      eggs: eggs
+    };
   }
 
 })();
