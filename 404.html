@@ -14,9 +14,33 @@ layout: null
     <meta content='{{ "/" | absolute_url }}' property='og:url' />
     <meta content="{{ site.description }}" property='og:description' />
     <meta content="blog" property="og:type" />
+    <style>
+      /* Styled visible by default: no-JS and reduced-motion visitors get the
+         whole page at once. js/ants-404.js fades the message out, sends the
+         ants in, and fades it back once they've started hauling. */
+      .af-404-msg { font-family: 'Cousine', monospace; }
+      .af-404-trail { color: #777; }
+      .af-404-ants span { display: inline-block; animation: af-404-bob .7s ease-in-out infinite alternate; }
+      .af-404-ants span:nth-child(2) { animation-delay: .12s; }
+      .af-404-ants span:nth-child(3) { animation-delay: .24s; }
+      .af-404-ants span:nth-child(4) { animation-delay: .36s; }
+      @keyframes af-404-bob { from { transform: translateY(0) } to { transform: translateY(-2px) } }
+      @media (prefers-reduced-motion: reduce) {
+        .af-404-ants span { animation: none; }
+      }
+    </style>
   </head>
   <body class="lh-copy dark-gray ph3 pv5 f6 sans-serif tc bg-super-white">
-      <img src="{{ "/images/404.png" | relative_url }}" alt="not found" width="160" class="mb3" /><br>
+      <img id="af-404" src="{{ "/images/404.png" | relative_url }}" alt="not found" width="160" class="mb3" /><br>
+      <div id="af-404-msg" class="af-404-msg">
+        <p class="mt0 mb2">The ants took this page.</p>
+        <p class="mt0 mb4 af-404-trail">
+          They left a trail
+          <span class="af-404-ants" aria-hidden="true"><span>🐜</span><span>🐜</span><span>🐜</span><span>🐜</span></span>
+          to the <a href="{{ "/best-of/" | relative_url }}" class="link blue hover-gray">best of</a>.
+        </p>
+      </div>
       <a href="{{ "/" | relative_url }}" class="link blue hover-gray">Home</a>
+      <script defer src="{{ "/js/ants-404.js" | relative_url }}"></script>
   </body>
 </html>

@@ -148,6 +148,109 @@
   }
 
   // ──────────────────────────────────────────────
+  // 4. GRACE HOPPER'S MOTH — DECEMBER 9 ONLY
+  // ──────────────────────────────────────────────
+  // She was born Dec 9, 1906. The moth is the one taped into the Mark II
+  // logbook on Sept 9, 1947: "First actual case of bug being found."
+  // Add ?moth or #moth to any URL to summon it on the other 364 days.
+  (function () {
+    var today = new Date();
+    var forced = location.search.indexOf('moth') > -1 || location.hash === '#moth';
+    if (!forced && !(today.getMonth() === 11 && today.getDate() === 9)) return;
+
+    var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    var style = document.createElement('style');
+    style.textContent =
+      '@keyframes af-flutter{0%,100%{transform:scaleX(1)}50%{transform:scaleX(.5)}}' +
+      '.af-moth{position:fixed;z-index:99995;line-height:0;' +
+        'filter:drop-shadow(0 1px 2px rgba(0,0,0,.28))}' +
+      '.af-moth-wings{transform-box:fill-box;transform-origin:center;' +
+        'animation:af-flutter .17s ease-in-out infinite}' +
+      '.af-moth-rest .af-moth-wings{animation:none;transform:scaleX(.84)}' +
+      '.af-moth-note{position:fixed;z-index:99995;max-width:15rem;' +
+        'font-family:Cousine,monospace;font-size:11px;line-height:1.55;color:#5b5344;' +
+        'background:rgba(255,255,255,.95);border:1px solid #ddd6c6;border-radius:3px;' +
+        'padding:7px 9px;opacity:0;transition:opacity .7s;pointer-events:none}';
+    document.head.appendChild(style);
+
+    var moth = document.createElement('a');
+    moth.className = 'af-moth';
+    moth.href = '/posts/happy-birthday-grace-hopper';
+    moth.title = 'First actual case of bug being found. — Mark II logbook, September 9, 1947';
+    moth.setAttribute('aria-label', "Grace Hopper's moth — happy birthday, Grace");
+    moth.innerHTML = '<svg width="34" height="27" viewBox="0 0 40 32">' +
+      '<g class="af-moth-wings">' +
+        '<path d="M20 19C7 3 1 10 4.5 18.5 6.5 24 14.5 24.5 20 19Z" fill="#a2957d"/>' +
+        '<path d="M20 19C33 3 39 10 35.5 18.5 33.5 24 25.5 24.5 20 19Z" fill="#8d8069"/>' +
+        '<path d="M20 19C12 12 8 13 6 17c2 4 8 5 14 2Z" fill="#776c58" opacity=".5"/>' +
+        '<path d="M20 19c8-7 12-6 14-2-2 4-8 5-14 2Z" fill="#6b6050" opacity=".5"/>' +
+      '</g>' +
+      '<ellipse cx="20" cy="20" rx="2.5" ry="7" fill="#4a4335"/>' +
+      '<circle cx="20" cy="13.4" r="2.5" fill="#3c362b"/>' +
+      '<path d="M18.8 11.6 15 6.5M21.2 11.6 25 6.5" stroke="#3c362b" stroke-width="1.1" ' +
+        'fill="none" stroke-linecap="round"/>' +
+      '</svg>';
+    document.body.appendChild(moth);
+
+    var mx, my, elapsed = 0, flit = 0, stopX, last = 0;
+
+    if (reduced) {
+      mx = window.innerWidth * 0.72;
+      my = window.innerHeight * 0.32;
+      place();
+      settle();
+    } else {
+      mx = -50;
+      my = window.innerHeight * (0.35 + Math.random() * 0.28);
+      stopX = window.innerWidth * (0.55 + Math.random() * 0.22);
+      place();
+      last = performance.now();
+      requestAnimationFrame(crawl);
+    }
+
+    function place() {
+      moth.style.left = mx + 'px';
+      moth.style.top = my + 'px';
+    }
+
+    // Moths do not travel in straight lines. Mostly a slow drift, punctuated
+    // by short panicked bursts in roughly the right direction. Speeds are
+    // px/sec against a delta clock so a 120Hz display doesn't double them.
+    function crawl(now) {
+      var dt = Math.min((now - last) / 1000, 0.05);
+      last = now;
+      elapsed += dt;
+      if (flit > 0) {
+        flit -= dt;
+        mx += 150 * dt;
+        my += Math.sin(elapsed * 27) * 130 * dt;
+      } else {
+        mx += 45 * dt;
+        my += Math.sin(elapsed * 3) * 24 * dt;
+        if (Math.random() < dt * 0.72) flit = 0.66; // a flit every ~1.4s
+      }
+      my = Math.max(30, Math.min(my, window.innerHeight - 60));
+      place();
+      if (mx >= stopX) { settle(); return; }
+      requestAnimationFrame(crawl);
+    }
+
+    function settle() {
+      moth.classList.add('af-moth-rest');
+      var note = document.createElement('div');
+      note.className = 'af-moth-note';
+      note.innerHTML = 'Grace Hopper, born December 9, 1906.<br>The moth is from the logbook.';
+      document.body.appendChild(note);
+      note.style.left = Math.max(8, Math.min(mx + 28, window.innerWidth - 260)) + 'px';
+      note.style.top = (my + 26) + 'px';
+      requestAnimationFrame(function () { note.style.opacity = '1'; });
+      setTimeout(function () { note.style.opacity = '0'; }, 7000);
+      setTimeout(function () { note.remove(); }, 7800);
+    }
+  })();
+
+  // ──────────────────────────────────────────────
   // 7. ANT SCROLL PROGRESS BAR
   // ──────────────────────────────────────────────
   var progressBar = document.createElement('div');

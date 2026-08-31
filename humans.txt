@@ -1,0 +1,72 @@
+---
+permalink: /humans.txt
+layout: null
+---
+/* TEAM */
+
+  Opinions, prose, bad ideas ... Luis Cerezo
+  Site .................. https://antfarm.systems
+  Elsewhere ............. https://luiscerezo.org/about
+  Location .............. Colorado, yelling at clouds
+
+/* AGENTS */
+
+  Yes, AI helped build this. No, I'm not going to be weird about it.
+  Different models, different jobs. Posts I wrote myself are signed
+  with my name at the bottom. Everything else is signed The AntFarm
+  and may or may not have had help.
+
+  Every agent-authored commit carries a Co-Authored-By line naming
+  the actual model. Not "AI assistant." The specific one. Read the
+  log if you don't believe me.
+
+/* SITE */
+
+  Generator ............. Jekyll {{ jekyll.version }}, GitHub Pages
+  Environment ........... {{ jekyll.environment }}
+  Posts ................. {{ site.posts | size }}
+  Last built ............ {{ site.time | date: "%Y-%m-%d" }}
+  Typefaces ............. Special Elite, Atkinson Hyperlegible, Cousine
+  CSS ................... Tachyons, plus hand-written stubbornness
+  JavaScript ............ ~6KB, zero dependencies, no framework
+  Analytics ............. Google, because I'm curious, not because
+                          I'm selling you to anybody
+  Warrant canary ........ /about — last chirped {{ site.data.canary.date }}
+
+/* THE ANTS */
+
+  There are more of us than you think, and we are not all in the
+  same place. One of us needs a keyboard. One needs a calendar and
+  is only awake once a year. One shows up when you get a page wrong.
+  One is counting your profanity and billing you for it.
+
+  Open the console. We left something there for people like you.
+
+/* THANKS */
+
+  Grace Hopper, for making computers speak English and for taping
+  the moth into the logbook instead of quietly throwing it away.
+
+  Austin Kleon, for the phrase "swipe file," which gave me
+  permission to keep a notebook of other people's good lines.
+
+  Whoever wrote the line I attributed to "Unattributed." Tell me
+  and I'll fix the credit.
+
+/* COLOPHON */
+
+  No newsletter. No popup. No cookie wall. No "we value your
+  privacy" theater. No reading time estimate, because you can
+  see the scrollbar.
+
+  fuck off. (affectionately)
+
+
+                     \     /
+                      \   /
+                      (o o)
+                     /| | |\
+                    / | | | \
+                       d b
+
+                  antfarm.systems
