@@ -29,7 +29,11 @@ body { font-family: "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI
   padding: .5rem 4rem;
   margin: 2em -4rem;
 }
+/* The -4rem bleed makes this rule wider than the text column, so it will happily
+   saw straight through a floated image (book covers, for one). Clear the floats
+   and it lands below them instead. */
 .markdown-body > hr {
+  clear: both;
   margin: 2em -4rem;
   border: 0;
   border-bottom: 1px dotted #CCC;
