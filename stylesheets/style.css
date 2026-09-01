@@ -135,6 +135,22 @@ body { font-family: "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI
   transform: rotate(-0.3deg);
 }
 
+/* --- Ratings, in ants ---
+   `rating: "4.5"` in a post's front matter; see _includes/rating.html. The
+   half ant is clipped rather than faded, so half a point looks like an ant
+   somebody got to first. */
+.af-rating { letter-spacing: .18em; line-height: 1; }
+.af-rating .af-ant { font-size: 1.1rem; }
+/* Narrower than the glyph on purpose — the overflow is the missing half. */
+.af-rating .af-ant-half {
+  display: inline-block;
+  width: .62em;
+  overflow: hidden;
+  vertical-align: bottom;
+}
+.af-rating .af-ant-blank { opacity: .22; filter: grayscale(1); }
+.af-rating-num { letter-spacing: 0; margin-left: .4rem; vertical-align: .1rem; }
+
 /* --- Sidenotes ---
    Opt-in via page.footnotes front matter. Renders a cleanly-styled
    numbered list at the end of a post, distinct from body prose, with
@@ -224,6 +240,11 @@ body { font-family: "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI
   /* §12 hangs a bright tan coffee stain on posts over two years old. Up top
      that's a stain; down here it should be a damp patch, not a spotlight. */
   main > img[src*="coffee-stain"] { filter: brightness(.32) contrast(1.15); opacity: .5; }
+
+  /* The ant glyph is a dark bug, and soil is a dark background. Give the ones
+     you earned a bit of the same eyeshine the tunnel ants have. */
+  .af-rating .af-ant { filter: drop-shadow(0 0 2px rgba(217, 201, 138, .45)); }
+  .af-rating .af-ant-blank { opacity: .3; filter: grayscale(1) brightness(1.5); }
 }
 
 /* Respect reduced-motion preferences for any future animations. */

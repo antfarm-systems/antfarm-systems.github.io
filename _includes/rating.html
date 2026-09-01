@@ -1,0 +1,29 @@
+{%- comment -%}
+  Ratings, in ants. Opt in with `rating: "4.5"` in a post's front matter —
+  anything from 0 to 5, halves allowed. Stars are for hotels.
+
+  A half rating renders a genuinely half-eaten ant (clipped, not faded), and
+  the ants you didn't award are still there, greyed out, so a 2 reads as a
+  verdict rather than as a short row. Styling lives in stylesheets/style.css.
+{%- endcomment -%}
+{%- assign score = include.rating | default: page.rating | times: 1.0 -%}
+{%- if score > 5 %}{% assign score = 5.0 %}{% endif -%}
+{%- if score < 0 %}{% assign score = 0.0 %}{% endif -%}
+{%- assign full = score | floor -%}
+{%- assign remainder = score | minus: full -%}
+{%- assign half = false -%}
+{%- if remainder >= 0.25 and remainder < 0.75 %}{% assign half = true %}{% endif -%}
+{%- if remainder >= 0.75 %}{% assign full = full | plus: 1 %}{% endif -%}
+{%- assign remaining = 5 | minus: full -%}
+{%- if half %}{% assign remaining = remaining | minus: 1 %}{% endif -%}
+{%- comment -%} Trim the number for display: 4.0 should read "4", not "4.0". {%- endcomment -%}
+{%- assign shown = score | floor -%}
+{%- unless score == shown %}{% assign shown = score %}{% endunless -%}
+<div class="af-rating mb2" role="img"
+     aria-label="Rated {{ shown }} out of 5 ants"
+     title="{{ shown }} out of 5 ants">
+  {%- if full > 0 %}{% for i in (1..full) %}<span class="af-ant">🐜</span>{% endfor %}{% endif -%}
+  {%- if half %}<span class="af-ant af-ant-half">🐜</span>{% endif -%}
+  {%- if remaining > 0 %}{% for i in (1..remaining) %}<span class="af-ant af-ant-blank">🐜</span>{% endfor %}{% endif -%}
+  <span class="af-rating-num f7 silver">{{ shown }}/5</span>
+</div>

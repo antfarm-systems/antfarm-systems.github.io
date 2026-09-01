@@ -41,6 +41,7 @@
                 {% endfor %}
               </div>
             {% endif %}
+            {% if page.rating %}{% include rating.html %}{% endif %}
           </div>
         {% endif %}
         <div style="font-size:1.0625rem; line-height:1.65;" class="markdown-body{% if is_quote %} quote-post{% endif %}">
