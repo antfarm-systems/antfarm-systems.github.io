@@ -4,7 +4,7 @@ title: About the AntFarm
 
 This is a blog about AWS, tech, work, class, my journey in art and life plus the bonus *whatever else I feel like yelling at the clouds about.* 
 
-It's also a playground. I build dumb things here because browsers can do way more than people give them credit for. Some of it is useful. Some of it is just fun. Poke around. Highlight things. Sit still for a while. Read the source. The ants are always watching.
+It's also a playground. I build dumb things here because browsers can do way more than people give them credit for. Some of it is useful. Some of it is just fun. Poke around. Highlight things, click on things, double click. Look at the dev console. Try dark mode, try light mode... Sit still for a while. Read the source. The ants are always watching. 
 
 Some posts are [just a quote]({{ "/posts/nobody-is-special" | relative_url }}), set big in a beat-up typewriter font. That's part of my swipe file, Austin Kleon's term from *Steal Like an Artist* — lines I copied into a paper notebook because they hit me in some way. Some are attributed. Some say Unattributed because I wrote down the line and lost the source. If one of them is yours, tell me and I'll fix the credit.
 
