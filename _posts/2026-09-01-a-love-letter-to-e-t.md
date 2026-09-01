@@ -1,7 +1,7 @@
 ---
 title: A love letter to E.T
 date: 2026-09-01
-au: luis
+author: luis
 ---
 I saw E.T. on the "leaving soon!" section of one of the streaming apps. That worked for me, I haven't watched E.T. In a very. long. time.
 
