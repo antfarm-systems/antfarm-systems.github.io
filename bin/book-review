@@ -1,0 +1,218 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# Start a book review post from a note in the Books Obsidian vault.
+#
+#   bin/book-review            # pick from a list
+#   bin/book-review zen        # match by title
+#   bin/book-review --help
+#
+# The vault is the library; this repo is the reviews. Most books never get
+# reviewed, so nothing here syncs or scans on its own — you name a book, it
+# writes one post skeleton, and that's the whole relationship.
+#
+# What it does with the vault's front matter: keeps the four fields the blog
+# actually reads (title, date, author, tags), moves the bibliographic ones under
+# a `book:` key where they can't collide with Jekyll, drops the physical-library
+# ones (condition, valuation, copies, acquired), and saves the cover locally so
+# the social card works. See the notes at each step below.
+
+require 'yaml'
+require 'date'
+require 'fileutils'
+require 'net/http'
+require 'uri'
+
+VAULT = ENV.fetch('BOOKS_VAULT', File.expand_path('~/Documents/notestoself/Books/Books/Notes'))
+REPO  = File.expand_path('..', __dir__)
+COVER_DIR = File.join(REPO, 'images', 'covers')
+
+# Library-only fields. They describe the object on the shelf, not the book, and
+# they are noise (or worse — see `published`) in a post.
+DROP = %w[condition valuation copies acquired read subjects tags cover editors].freeze
+
+def die(msg)
+  warn "book-review: #{msg}"
+  exit 1
+end
+
+# Jekyll wants YYYY-MM-DD-slug.md, and Book Catalog's filenames are raw titles:
+# spaces, smart apostrophes, colons. Apostrophes get deleted rather than
+# hyphenated so it's "centaurs" and not "centaur-s".
+def slugify(str)
+  str.unicode_normalize(:nfkd)
+     .gsub(/['’`]/, '')
+     .downcase
+     .gsub(/[^a-z0-9]+/, '-')
+     .gsub(/\A-+|-+\z/, '')
+end
+
+# YAML double-quoted scalars only accept a short list of escapes, so quote by
+# hand rather than trusting String#inspect. Book titles are colon-heavy, which
+# is why every string here gets quoted whether it looks like it needs it or not.
+def yq(val)
+  '"' + val.to_s.gsub('\\', '\\\\\\\\').gsub('"', '\"') + '"'
+end
+
+def books
+  Dir[File.join(VAULT, '*.md')].sort.map do |path|
+    front = File.read(path)[/\A---\s*\n(.*?)\n---\s*\n/m, 1]
+    next unless front
+
+    data = begin
+      YAML.safe_load(front, permitted_classes: [Date], aliases: true) || {}
+    rescue Psych::SyntaxError => e
+      warn "book-review: skipping #{File.basename(path)} — bad front matter (#{e.message})"
+      next
+    end
+    { path: path, data: data, title: data['title'] || File.basename(path, '.md') }
+  end.compact
+end
+
+def pick(list, query)
+  die "no book notes in #{VAULT}" if list.empty?
+
+  if query
+    hits = list.select { |b| b[:title].downcase.include?(query.downcase) }
+    die "nothing in the vault matches #{query.inspect}" if hits.empty?
+    return hits.first if hits.size == 1
+
+    list = hits
+  end
+
+  list.each_with_index do |b, i|
+    who = Array(b[:data]['authors']).join(', ')
+    puts format('%2d. %s%s', i + 1, b[:title], who.empty? ? '' : " — #{who}")
+  end
+  print "\nWhich one? "
+  n = $stdin.gets.to_s.strip.to_i
+  die 'nothing picked' unless n.between?(1, list.size)
+  list[n - 1]
+end
+
+# OpenLibrary serves -S/-M/-L. Book Catalog stores the medium (about 180px
+# wide), too small for the page; -L is around 325x500 and ~40KB.
+def cover_url(raw)
+  raw.to_s.sub(%r{(covers\.openlibrary\.org/.*)-M\.jpg\z}, '\1-L.jpg')
+end
+
+def fetch_cover(url, slug)
+  return nil if url.to_s.empty?
+
+  ext = File.extname(URI.parse(url).path)
+  ext = '.jpg' if ext.empty?
+  dest = File.join(COVER_DIR, "#{slug}#{ext}")
+
+  # OpenLibrary 302s to a placeholder when it has no cover for an edition, and
+  # sometimes 302s to a real one, so follow a couple of hops and then judge by
+  # size — the placeholder is a few bytes, an actual cover is tens of KB.
+  res = nil
+  3.times do
+    res = Net::HTTP.get_response(URI.parse(url))
+    break unless res.is_a?(Net::HTTPRedirection) && res['location']
+
+    url = URI.join(url, res['location']).to_s
+  end
+  return nil unless res.is_a?(Net::HTTPSuccess) && res.body.bytesize > 1024
+
+  FileUtils.mkdir_p(COVER_DIR)
+  File.binwrite(dest, res.body)
+  "/images/covers/#{slug}#{ext}"
+rescue StandardError => e
+  warn "book-review: couldn't fetch the cover (#{e.class}) — carrying on without it"
+  nil
+end
+
+query = nil
+force = false
+skip_cover = false
+ARGV.each do |arg|
+  case arg
+  when '--help', '-h'
+    puts File.read(__FILE__).lines[2..8].map { |l| l.sub(/\A# ?/, '') }.join
+    exit 0
+  when '--force' then force = true
+  when '--no-cover' then skip_cover = true
+  else query = arg
+  end
+end
+
+die "no vault at #{VAULT} (set BOOKS_VAULT to point somewhere else)" unless Dir.exist?(VAULT)
+
+book = pick(books, query)
+data = book[:data]
+title = data['title'].to_s
+die "#{File.basename(book[:path])} has no title in its front matter" if title.empty?
+
+slug = slugify(title)
+isbn = data['isbn'].to_s
+dest = File.join(REPO, '_posts', "#{Date.today.strftime('%F')}-#{slug}.md")
+
+# Already reviewed? The ISBN is the only stable identifier — the post title is
+# free to drift away from the book's.
+unless isbn.empty?
+  existing = Dir[File.join(REPO, '_posts', '*.md')].find { |f| File.read(f).include?(isbn) }
+  if existing && !force
+    die "already reviewed in #{File.basename(existing)} (--force to write another)"
+  end
+end
+if File.exist?(dest) && !force
+  die "#{File.basename(dest)} exists already (--force to overwrite)"
+end
+
+local_cover = skip_cover ? nil : fetch_cover(cover_url(data['cover']), slug)
+
+# ---- front matter
+fm = []
+fm << "title: #{yq(title)}"
+fm << "date: #{Date.today.strftime('%F')}"
+fm << 'author: luis' # a review is an opinion, and _config.yml defaults to antfarm
+fm << 'tags: [books]'
+fm << "image: #{local_cover}" if local_cover # must be root-relative: head.html runs it through absolute_url
+
+fm << 'book:'
+# `title` again, deliberately: the post title is free to become something with
+# an angle ("Doctorow on the hype"), and the book still needs its real name.
+fm << "  title: #{yq(title)}"
+authors = Array(data['authors']).reject { |a| a.to_s.strip.empty? }
+fm << "  authors: [#{authors.map { |a| yq(a) }.join(', ')}]" unless authors.empty?
+fm << "  publisher: #{yq(data['publisher'])}" unless data['publisher'].to_s.strip.empty?
+# Vault key is `published`, which Jekyll reads as a boolean and would silently
+# unpublish the post. Renamed to `year`, and safely under `book:` regardless.
+fm << "  year: #{data['published']}" unless data['published'].to_s.strip.empty?
+fm << "  pages: #{data['pages']}" unless data['pages'].to_s.strip.empty?
+fm << "  isbn: #{yq(isbn)}" unless isbn.empty?
+fm << "  cover: #{local_cover || cover_url(data['cover'])}" unless data['cover'].to_s.empty?
+
+# ---- body: the vault note's own prose, minus its scaffolding
+body = File.read(book[:path]).sub(/\A---\s*\n.*?\n---\s*\n/m, '')
+body = body.gsub(/^\s*<img[^>]*>\s*$/, '')       # the vault's remote cover thumbnail
+           .sub(/^##\s*Notes\s*$/i, '')          # its section heading
+           .strip
+
+meta = []
+meta << "**#{authors.join(', ')}**" unless authors.empty?
+pub = [data['publisher'], data['published']].reject { |v| v.to_s.strip.empty? }.join(', ')
+meta << pub unless pub.empty?
+meta << "#{data['pages']} pages" unless data['pages'].to_s.strip.empty?
+
+out = ["---", *fm, "---", '']
+if local_cover || !data['cover'].to_s.empty?
+  # fr-ns/ml3-ns so it only floats above tachyons' 30em breakpoint; on a phone
+  # it sits full-width above the text instead of squeezing it.
+  out << %(<img src="#{local_cover || cover_url(data['cover'])}" alt="Cover of #{title}" width="170" class="fr-ns ml4-ns mb3">)
+  out << ''
+end
+unless meta.empty?
+  out << meta.join(' · ')
+  out << ''
+end
+out << body unless body.empty?
+out << ''
+
+File.write(dest, out.join("\n"))
+
+puts "wrote #{dest.sub(REPO + '/', '')}"
+puts "cover #{local_cover ? "saved to #{local_cover}" : '— none saved, using the remote URL'}"
+puts 'note   carried over from the vault' unless body.empty?
+puts "\nIt's a skeleton, not a post: nothing publishes until you commit it."
