@@ -1,0 +1,40 @@
+{%- comment -%}
+Renders a photo from the CDN with an optional EXIF credit line.
+
+Reads the `photo:` map out of the post's front matter (see CLAUDE.md, "Photos on
+the CDN"). Call it where you want the photo to sit in the post:
+
+    {% include photo.html %}
+
+`exif: true` prints the camera line and the copyright; `exif: false` or omitting
+it prints the photo bare. The published JPEGs have no EXIF in them -- the prep
+script strips it -- so these values are written into front matter at publish
+time by `bin/photo-frontmatter`, not read from the file by Jekyll.
+
+Caption parts are assembled into a pipe-delimited string and split, because
+Liquid has no way to build an array in place.
+{%- endcomment -%}
+{%- assign p = include.photo | default: page.photo -%}
+{%- if p and p.src -%}
+<figure class="photo">
+  <img src="{{ p.src }}" alt="{{ p.alt }}"{% if p.width %} width="{{ p.width }}"{% endif %}{% if p.height %} height="{{ p.height }}"{% endif %} loading="lazy" decoding="async">
+  {%- if p.exif -%}
+    {%- assign parts = "" -%}
+    {%- if p.camera %}{% assign parts = parts | append: "|" | append: p.camera %}{% endif -%}
+    {%- if p.lens %}{% assign parts = parts | append: "|" | append: p.lens %}{% endif -%}
+    {%- if p.settings %}{% assign parts = parts | append: "|" | append: p.settings %}{% endif -%}
+    {%- comment -%}
+      Format the date into its own variable first. Chaining `| date:` onto the
+      append pipeline applies it to the whole accumulated string, which Liquid
+      happily parses as a date and collapses to just the date.
+    {%- endcomment -%}
+    {%- if p.taken %}{% assign shot_on = p.taken | date: "%B %-d, %Y" %}{% assign parts = parts | append: "|" | append: shot_on %}{% endif -%}
+    {%- assign bits = parts | remove_first: "|" | split: "|" -%}
+  <figcaption>
+    {%- if p.caption %}<span class="photo-caption">{{ p.caption }}</span>{% endif -%}
+    {%- if bits.size > 0 %}<span class="photo-exif">{{ bits | join: " &middot; " }}</span>{% endif -%}
+    {%- unless p.credit == false %}<span class="photo-credit">&copy; {{ p.credit | default: site.photo_credit }}</span>{% endunless -%}
+  </figcaption>
+  {%- endif -%}
+</figure>
+{%- endif -%}

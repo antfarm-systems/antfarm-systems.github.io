@@ -1,0 +1,199 @@
+#!/usr/bin/env bash
+#
+# prepare-photo — publish a photo to the CDN and print its front matter.
+#
+#   bin/prepare-photo <album-slug> <file>...            # prepare, don't upload
+#   bin/prepare-photo <album-slug> <file>... --upload    # prepare and ship it
+#
+# The gallery on luiscerezo.org strips every scrap of metadata, because those
+# photos are served as anonymous rows in a grid. Here the EXIF is the point: a
+# post says "f/8, ISO 1600, +1⅓ EV" and the reader can see what that bought.
+# So this keeps the camera data and drops only what identifies the equipment or
+# the location.
+#
+# Kept:     make, model, lens, focal length, aperture, shutter, ISO, exposure
+#           compensation, metering, flash, white balance, capture date
+# Dropped:  GPS of any kind, body/lens serial numbers, owner name, the software
+#           that touched it, maker notes, all XMP and IPTC, embedded thumbnails
+# Added:    copyright and artist, set to PHOTOGRAPHER below
+#
+# The whitelist is enforced by construction, not by blacklist: ImageMagick
+# writes a derivative with no metadata at all, then exiftool copies back only
+# the tags named in KEEP. A tag nobody thought about is dropped, not leaked.
+#
+# Requires: imagemagick, exiftool, awscli (only for --upload)
+set -euo pipefail
+
+PHOTOGRAPHER="Luis E. Cerezo"
+COPYRIGHT="© ${PHOTOGRAPHER}, all rights reserved"
+BUCKET="media.luiscerezo.org"
+CDN="https://dlt23dunpqfwk.cloudfront.net"
+AWS_PROFILE_DEFAULT="personal-lec"
+MAX_EDGE=2048
+QUALITY=82
+
+# Tags copied from the original into the stripped derivative. Note the absence
+# of Orientation: -auto-orient has already rotated the pixels, so carrying the
+# original value over would rotate the photo a second time in the browser.
+KEEP=(
+  -EXIF:Make -EXIF:Model
+  -EXIF:LensMake -EXIF:LensModel -EXIF:LensInfo
+  -EXIF:FocalLength -EXIF:FocalLengthIn35mmFormat
+  -EXIF:FNumber -EXIF:ExposureTime -EXIF:ISO
+  -EXIF:ExposureCompensation -EXIF:ExposureProgram -EXIF:ExposureMode
+  -EXIF:MeteringMode -EXIF:Flash -EXIF:WhiteBalance
+  -EXIF:DateTimeOriginal -EXIF:CreateDate
+)
+
+usage() { grep '^#' "$0" | sed 's/^# \{0,1\}//'; exit 1; }
+
+[[ $# -lt 2 ]] && usage
+ALBUM="$1"; shift
+UPLOAD=false
+FILES=()
+for arg in "$@"; do
+  case "$arg" in
+    --upload) UPLOAD=true ;;
+    -*) echo "unknown flag: $arg" >&2; exit 1 ;;
+    *) FILES+=("$arg") ;;
+  esac
+done
+[[ ${#FILES[@]} -eq 0 ]] && usage
+
+command -v magick   >/dev/null || { echo "imagemagick not found (brew install imagemagick)" >&2; exit 1; }
+command -v exiftool >/dev/null || { echo "exiftool not found (brew install exiftool)" >&2; exit 1; }
+$UPLOAD && { command -v aws >/dev/null || { echo "awscli not found (brew install awscli)" >&2; exit 1; }; }
+
+REPO="$(cd "$(dirname "$0")/.." && pwd)"
+OUT_DIR="$REPO/tmp/web-ready/$ALBUM"
+mkdir -p "$OUT_DIR"
+
+frontmatter=()
+
+for src in "${FILES[@]}"; do
+  [[ -f "$src" ]] || { echo "not a file: $src" >&2; exit 1; }
+
+  # Same renaming the gallery script uses, so URLs are predictable: basename
+  # lowercased, spaces to hyphens, always .jpg.
+  base="$(basename "${src%.*}" | tr '[:upper:] ' '[:lower:]-')"
+  out="$OUT_DIR/${base}.jpg"
+  echo "-> $out" >&2
+
+  # -strip drops EXIF, IPTC, XMP, the ICC profile and any embedded thumbnail.
+  # -colorspace sRGB first, so a Display P3 file doesn't lose its conversion
+  # along with its profile and come out desaturated.
+  magick "$src" \
+    -auto-orient \
+    -resize "${MAX_EDGE}x${MAX_EDGE}>" \
+    -colorspace sRGB \
+    -quality "$QUALITY" \
+    -strip \
+    "$out"
+
+  # -m tolerates the mangled XMP that phone and Wi-Fi-transfer files often
+  # carry; without it one bad source aborts the batch under set -e.
+  # The trailing # on Orientation and ColorSpace assigns the raw number instead
+  # of running it through exiftool's print conversion. Without it, "Orientation=1"
+  # gets reverse-matched against the human-readable table and lands on 3 --
+  # "Rotate 180" -- which browsers honour, publishing the photo upside down.
+  exiftool -m -q -overwrite_original \
+    -tagsFromFile "$src" "${KEEP[@]}" \
+    -EXIF:ColorSpace#=1 \
+    -EXIF:Orientation#=1 \
+    -EXIF:Copyright="$COPYRIGHT" \
+    -EXIF:Artist="$PHOTOGRAPHER" \
+    "$out"
+
+  # Belt and suspenders. The whitelist should make this impossible, but a
+  # leaked serial number or home address is not the kind of bug you find out
+  # about later, so fail loudly instead of shipping.
+  leaked="$(exiftool -q -s2 -GPS:all -SerialNumber -InternalSerialNumber \
+    -LensSerialNumber -OwnerName -CameraOwnerName -HostComputer "$out" 2>/dev/null || true)"
+  if [[ -n "$leaked" ]]; then
+    echo "REFUSING TO PUBLISH — identifying metadata survived in $out:" >&2
+    echo "$leaked" >&2
+    exit 1
+  fi
+
+  # -T is tab-delimited: half these values contain spaces ("FUJIFILM", "23.0 mm",
+  # "2017:09:03 11:10:58"), so splitting on whitespace scrambles the lot.
+  IFS=$'\t' read -r make model lens flen fnum shutter iso comp taken width height < <(
+    exiftool -T -f -Make -Model -LensModel -FocalLength -FNumber -ExposureTime \
+      -ISO -ExposureCompensation -DateTimeOriginal -ImageWidth -ImageHeight "$out"
+  )
+
+  # exiftool prints "-" for a tag the file doesn't have.
+  for v in make model lens flen fnum shutter iso comp taken; do
+    [[ "${!v}" == "-" ]] && declare "$v="
+  done
+
+  # "FUJIFILM" is how Fuji writes it; it is not how a caption reads.
+  case "$make" in FUJIFILM|Fujifilm) make="Fujifilm" ;; esac
+  camera="$(echo "${make} ${model}" | xargs)"
+
+  # "23.0 mm" -> "23mm", "8.0" -> "8". Trailing .0 is noise in a caption.
+  flen="${flen% mm}"; flen="${flen%.0}"; [[ -n "$flen" ]] && flen="${flen}mm"
+  fnum="${fnum%.0}"
+
+  # Thirds of a stop, written the way a photographer writes them.
+  case "$comp" in
+    *.33|*.3) comp="${comp%.3*}⅓" ;;
+    *.67|*.7) comp="${comp%.6*}"; comp="${comp%.7}⅔" ;;
+    *.5)      comp="${comp%.5}½" ;;
+    *.0)      comp="${comp%.0}" ;;
+  esac
+  # A fraction under one stop is "+⅔", not "+0⅔".
+  comp="$(printf '%s' "$comp" | sed 's/^\([+-]\)0\([⅓⅔½]\)$/\1\2/')"
+
+  settings=""
+  [[ -n "$fnum"    ]] && settings="f/${fnum}"
+  [[ -n "$shutter" ]] && settings="${settings:+$settings &middot; }${shutter}"
+  [[ -n "$iso"     ]] && settings="${settings:+$settings &middot; }ISO ${iso}"
+  if [[ -n "$comp" && "$comp" != "0" && "$comp" != "+0" && "$comp" != "-0" ]]; then
+    settings="${settings:+$settings &middot; }${comp} EV"
+  fi
+
+  block="photo:
+  src: \"${CDN}/antfarm/${ALBUM}/${base}.jpg\"
+  alt: \"DESCRIBE THIS — screen readers use it, and so does anyone the Referer guard 403s\""
+  [[ -n "$width"  ]] && block="$block
+  width: $width"
+  [[ -n "$height" ]] && block="$block
+  height: $height"
+  block="$block
+  exif: true"
+  [[ -n "$camera" ]] && block="$block
+  camera: \"$camera\""
+  # A named lens beats a focal length; the X100F's is fixed, so it reports none.
+  if [[ -n "$lens" ]]; then
+    block="$block
+  lens: \"$lens\""
+  elif [[ -n "$flen" ]]; then
+    block="$block
+  lens: \"$flen\""
+  fi
+  [[ -n "$settings" ]] && block="$block
+  settings: \"$settings\""
+  if [[ -n "$taken" ]]; then
+    block="$block
+  taken: $(echo "${taken%% *}" | tr ':' '-')"
+  fi
+  frontmatter+=("$block")
+done
+
+if $UPLOAD; then
+  AWS_PROFILE="${AWS_PROFILE:-$AWS_PROFILE_DEFAULT}" \
+  aws s3 sync "$OUT_DIR" "s3://${BUCKET}/public/antfarm/${ALBUM}/" \
+    --content-type image/jpeg \
+    --cache-control "public, max-age=31536000, immutable" >&2
+  echo "uploaded to s3://${BUCKET}/public/antfarm/${ALBUM}/" >&2
+else
+  echo "not uploaded — review $OUT_DIR, then re-run with --upload" >&2
+fi
+
+# Front matter goes to stdout so it can be piped or redirected; everything
+# else above went to stderr.
+echo >&2
+for block in "${frontmatter[@]}"; do
+  echo "$block"
+done

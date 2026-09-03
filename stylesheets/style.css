@@ -50,6 +50,49 @@ body { font-family: "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI
   border: 0;
 }
 
+/* Same trap as the iframes above: photos off the CDN carry their intrinsic
+   width/height attributes (needed to reserve space and avoid layout shift),
+   which is wider than the text column. Without this, main's overflow-hidden
+   crops the right edge instead of scaling the photo down. */
+.markdown-body img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* `{% include photo.html %}` with `exif: true`. The caption is metadata, not
+   prose — smaller, quieter, and set in the typewriter face so it reads as a
+   contact-sheet annotation rather than a sentence in the post. */
+.markdown-body figure.photo {
+  margin: 1.6rem 0;
+}
+.markdown-body figure.photo img {
+  display: block;
+}
+.markdown-body figure.photo figcaption {
+  font-family: "Special Elite", Courier, monospace;
+  font-size: .78rem;
+  line-height: 1.5;
+  color: #6b6b6b;
+  margin-top: .55rem;
+}
+.markdown-body figure.photo figcaption .photo-caption {
+  display: block;
+  margin-bottom: .2rem;
+}
+/* EXIF and credit sit on one line, separated by a dot, and wrap as a unit on
+   a phone rather than breaking mid-aperture. */
+.markdown-body figure.photo figcaption .photo-exif,
+.markdown-body figure.photo figcaption .photo-credit {
+  display: inline-block;
+  white-space: nowrap;
+}
+/* Separator only when the credit actually follows an EXIF line, so a photo with
+   `exif: true` but no camera data doesn't open with a stray dot. */
+.markdown-body figure.photo figcaption .photo-exif + .photo-credit::before {
+  content: " \00b7 ";
+  white-space: pre;
+}
+
 /* Inline pull quotes (`>` in a post). Same typewriter voice as `type: quote`
    posts, dialed down to live inside prose: a step up from body text, not a
    billboard. Sized so the multi-paragraph quotes in the older posts still
@@ -250,6 +293,8 @@ body { font-family: "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI
   }
   /* Post images are photographs — knock the glare back a little, don't invert. */
   .markdown-body img { filter: brightness(.88) saturate(.94); }
+  /* Caption metadata against soil: same warm gray as the quote attributions. */
+  .markdown-body figure.photo figcaption { color: #9a8f7d; }
   /* The signoff scribble is dark line art on transparent, so it disappears into
      the soil. Inverted it reads like chalk. Must come after the rule above. */
   img[src*="scribble"] { filter: invert(1) brightness(.85); mix-blend-mode: screen; }

@@ -17,21 +17,3 @@ photo:
 I've been learning to draw, and starting with trees. I don't remember when or where I took this photo, it appears to be wash park in Denver, so likely when we lived near there.
 
 {% include photo.html %}
-
-{% comment %}
-Draft scaffolding — Luis's words go outside this block, then delete it. Liquid
-comments never reach the HTML, which is why you can't see this on localhost.
-
-`title:` and `excerpt:` are placeholders in a descriptive voice, not yours. The
-excerpt feeds description, og:description and twitter:description, so it has to be
-real prose, ~160 chars.
-
-`date:` is today for all three of these drafts. Restagger them if you don't want
-three photo posts landing at once.
-
-Two things the file knows that the picture doesn't say outright: this one is a square
-crop, 1142 × 1142, shot that way in camera rather than cropped later. And it's the
-only one of the three at 0 EV — no exposure compensation at all, which is why the
-script left it out of the caption. You metered it straight and let the clouds do the
-work.
-{% endcomment %}

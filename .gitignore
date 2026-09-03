@@ -17,3 +17,8 @@ generated-diagrams/
 
 # Local working notes.
 TODO.md
+
+# bin/prepare-photo's staging area. The derivatives it writes live on the CDN;
+# keeping copies here would put the megabytes back in the repo we sent them to
+# S3 to avoid. Jekyll would also try to publish them.
+tmp/
