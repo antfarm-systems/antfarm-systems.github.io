@@ -38,6 +38,18 @@ body { font-family: "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI
   border: 0;
   border-bottom: 1px dotted #CCC;
 }
+/* Embedded video. Every embed in _posts is pasted straight from YouTube, which
+   hardcodes width="560" height="315" -- wider than the text column on a phone,
+   where main's overflow-hidden silently crops the right edge of the video.
+   Scale to the column and hold 16:9 so the frame doesn't stretch. */
+.markdown-body iframe {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  border: 0;
+}
+
 /* Inline pull quotes (`>` in a post). Same typewriter voice as `type: quote`
    posts, dialed down to live inside prose: a step up from body text, not a
    billboard. Sized so the multi-paragraph quotes in the older posts still
