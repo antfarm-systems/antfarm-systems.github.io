@@ -80,6 +80,23 @@ This has already happened once: `_posts/2026-09-03-cottonwood.md` was pushed whi
 `_includes/photo.html` was still untracked. A post and the machinery it calls belong in
 the same commit.
 
+### CSS changes take up to 4 hours to reach anyone
+
+`antfarm.systems` sits behind Cloudflare, which caches `stylesheets/style.css` with
+`cache-control: max-age=14400`. A pushed CSS change is live at the origin but **not**
+what visitors get:
+
+```sh
+curl -sI https://antfarm.systems/stylesheets/style.css | grep -iE 'cf-cache-status|age'
+curl -s  https://antfarm-systems.github.io/stylesheets/style.css | grep <your-new-rule>
+```
+
+The second URL is GitHub Pages direct and bypasses Cloudflare — use it to tell "the
+build hasn't finished" apart from "the edge is serving a stale copy." A hard reload
+fixes your own browser but not anyone else's; that needs a Cloudflare cache purge.
+So don't diagnose a layout bug from the live site right after a CSS push — you are
+probably looking at the previous stylesheet.
+
 ## Photos on the CDN
 
 Small site furniture (covers, icons, anything in a link card or the feed) lives in
