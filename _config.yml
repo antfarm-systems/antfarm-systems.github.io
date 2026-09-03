@@ -33,6 +33,7 @@ exclude:
   - "CNAME"
   - "Gemfile*"
   - "README*"
+  - "CLAUDE.md" # repo instructions, not site content
 
 plugins:
   - jekyll-sitemap
