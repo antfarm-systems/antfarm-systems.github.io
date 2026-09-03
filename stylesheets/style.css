@@ -65,8 +65,16 @@ body { font-family: "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI
 .markdown-body figure.photo {
   margin: 1.6rem 0;
 }
+/* max-width alone isn't enough for a square or portrait frame: at full column
+   width a 1:1 photo is 640px tall and taller than the viewport on a laptop, so
+   you scroll past it without ever seeing the whole picture. Capping the height
+   and letting width follow keeps the aspect ratio and the photo on one screen. */
 .markdown-body figure.photo img {
   display: block;
+  max-height: 78vh;
+  width: auto;
+  height: auto;
+  margin-inline: auto;
 }
 .markdown-body figure.photo figcaption {
   font-family: "Special Elite", Courier, monospace;
@@ -79,9 +87,14 @@ body { font-family: "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI
   display: block;
   margin-bottom: .2rem;
 }
-/* EXIF and credit sit on one line, separated by a dot, and wrap as a unit on
-   a phone rather than breaking mid-aperture. */
-.markdown-body figure.photo figcaption .photo-exif,
+/* EXIF and credit run on as one line and wrap at the dot separators. Do NOT put
+   `white-space: nowrap` on .photo-exif: the full caption is ~630px in this face,
+   the column on a phone is ~256px, and main's overflow-hidden clips the overflow
+   instead of scrolling it — the ISO and the date just vanish. The credit is short
+   enough to hold together. */
+.markdown-body figure.photo figcaption .photo-exif {
+  display: inline;
+}
 .markdown-body figure.photo figcaption .photo-credit {
   display: inline-block;
   white-space: nowrap;
