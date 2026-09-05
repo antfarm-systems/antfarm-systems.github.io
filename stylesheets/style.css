@@ -106,6 +106,87 @@ body { font-family: "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI
   white-space: pre;
 }
 
+/* --- Photo lightbox ---
+   Click a photo to see it big on a dark field. js/lightbox.js builds the
+   overlay and adds .af-zoomable to each figure it wires up; the cursor lives
+   behind that class so a JS-off page never shows a zoom cursor on something
+   that won't zoom.
+
+   The overlay is a direct child of <body>, outside .markdown-body, and that
+   placement is load-bearing twice over: `main` is `overflow-hidden`, and the
+   dark-mode rule near the bottom of this file dims post images with
+   `filter: brightness(.88)`. A photo you opened on purpose shouldn't be the
+   dimmed copy, so it must not match that selector. */
+.markdown-body figure.photo.af-zoomable img { cursor: zoom-in; }
+
+.af-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 9000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: .9rem;
+  padding: 3vh 3vw;
+  /* Soil, not black — the same family as the dark-mode background, so opening a
+     photo down there dims the room rather than punching a hole in it. */
+  background: rgba(12, 9, 6, .94);
+  cursor: zoom-out;
+  opacity: 0;
+  transition: opacity .22s ease;
+}
+.af-lightbox.is-open { opacity: 1; }
+
+/* The 78vh cap on the inline figure exists so a portrait photo fits one screen.
+   In here the photo IS the screen, so it gets the room: vw/vh both, whichever
+   binds first, and `width/height: auto` to override the intrinsic attributes
+   the include prints. */
+.af-lightbox img {
+  max-width: 94vw;
+  max-height: 84vh;
+  width: auto;
+  height: auto;
+  box-shadow: 0 18px 60px rgba(0, 0, 0, .55);
+  transform: scale(.985);
+  transition: transform .22s ease;
+}
+.af-lightbox.is-open img { transform: none; }
+
+/* Same typewriter voice as the figcaption it came from. */
+.af-lightbox-cap {
+  margin: 0;
+  max-width: 62ch;
+  text-align: center;
+  font-family: "Special Elite", Courier, monospace;
+  font-size: .78rem;
+  line-height: 1.5;
+  color: #b8ad9b;
+}
+
+.af-lightbox-close {
+  position: absolute;
+  top: 1.1rem;
+  right: 1.4rem;
+  padding: 0 .3rem;
+  border: 0;
+  background: none;
+  font-family: "Special Elite", Courier, monospace;
+  font-size: 2rem;
+  line-height: 1;
+  color: #b8ad9b;
+  cursor: pointer;
+}
+.af-lightbox-close:hover,
+.af-lightbox-close:focus-visible { color: #f2ece1; }
+/* Opening the lightbox moves focus here, and Chrome's default ring is a bright
+   blue rectangle sitting on soil. Same warm tan the earned ants glow with. */
+.af-lightbox-close:focus-visible {
+  outline: 2px solid #d9c98a;
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
 /* Inline pull quotes (`>` in a post). Same typewriter voice as `type: quote`
    posts, dialed down to live inside prose: a step up from body text, not a
    billboard. Sized so the multi-paragraph quotes in the older posts still
