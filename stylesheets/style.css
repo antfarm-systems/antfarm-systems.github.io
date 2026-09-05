@@ -138,6 +138,18 @@ body { font-family: "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI
 }
 .af-lightbox.is-open { opacity: 1; }
 
+/* Both of these are load-bearing. `display: flex` above is a class selector, which
+   outranks the UA stylesheet's `[hidden] { display: none }` — so `overlay.hidden = true`
+   in close() sets the attribute and changes nothing. The overlay stays flexed across
+   the whole viewport at opacity 0: invisible, cursor still zoom-out, eating every click
+   on the page until a reload. Restore what `hidden` is supposed to mean.
+
+   pointer-events covers the 240ms fade-out before `hidden` lands, and any path where it
+   never lands at all (a thrown error, a cleared timeout). Nothing that isn't .is-open
+   should ever be in the way. */
+.af-lightbox[hidden] { display: none; }
+.af-lightbox:not(.is-open) { pointer-events: none; }
+
 /* The 78vh cap on the inline figure exists so a portrait photo fits one screen.
    In here the photo IS the screen, so it gets the room: vw/vh both, whichever
    binds first, and `width/height: auto` to override the intrinsic attributes
