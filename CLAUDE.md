@@ -117,7 +117,21 @@ bin/prepare-photo <album-slug> ~/src/tmp-photos-for-uploads/whatever.jpg --uploa
 ```
 
 Leave `--upload` off for a dry run; derivatives land in `tmp/` (gitignored) for you to
-look at first. Then put the block it prints in the post's front matter and call the
+look at first. Two other flags, both used by the Inktober days:
+
+- `--thumb` also writes `<base>-thumb.jpg` (480px, square-cropped) and adds `thumb:` to
+  the block. For pages showing many photos at once — a grid of 31 full-size JPEGs is
+  twenty-odd megabytes.
+- `--no-exif` drops the camera data from **both** places: the printed block gets
+  `exif: false` and no camera keys, and nothing is copied into the published JPEG
+  either, which keeps only the copyright. So `exif: true` on its own can't bring the
+  line back — there's nothing left to read. Re-run without the flag against the
+  original in `~/src/tmp-photos-for-uploads/`.
+- `--as <name>` names the published file instead of inheriting the camera's. One file
+  at a time. Worth using: the CDN path goes into front matter and is cached
+  `immutable` for a year, so `day-01-apple.jpg` beats `dsc_0421.jpg` permanently.
+
+Then put the block it prints in the post's front matter and call the
 include where the photo should sit in the body:
 
 ```liquid
@@ -142,6 +156,12 @@ photo:
 `exif: true` renders the camera line and `© Luis E. Cerezo` under the photo.
 The name comes from `photo_credit` in `_config.yml`. **Always write real `alt` text** —
 the script leaves a shouty placeholder there on purpose.
+
+Worth knowing before you set `exif: false`: the credit is nested inside the same
+`{% if p.exif %}` as the camera data, so turning EXIF off drops `© Luis E. Cerezo`
+along with it and the photo renders with no `<figcaption>` at all. That's the
+intended behaviour for the Inktober drawings — the copyright is still written into
+the JPEG itself — but it's a surprise if you only meant to hide the camera line.
 
 ### What the pipeline does to the metadata
 
@@ -207,6 +227,94 @@ AWS_PROFILE=personal-lec aws cloudfront create-invalidation \
 are already on the allowlist. Serving the site on a different port means 403s on every
 photo; adding another host means editing `site_origins` in the infra module and
 re-applying.
+
+## Inktober lives in a collection, not in `_posts`
+
+Luis is learning to draw. Every October he inks the day's
+[Inktober](https://inktober.com/) prompt, photographs the page, and it goes up at
+`/inktober/`. Thirty-one days of that would bury the writing, so **the days are a
+Jekyll collection and not posts**:
+
+```yaml
+collections:
+  inktober:
+    output: true
+    permalink: /inktober/:path     # _inktober/2026/04-cactus.md -> /inktober/2026/04-cactus
+```
+
+That one decision is doing all the work. `site.posts` never contains them, so
+`index.html`, `feed.xml`, `best-of.html`, `collections.html` and the prev/next arrows
+skip them **without a filter to maintain** — the next surface that loops over
+`site.posts` gets the same behaviour for free. There's deliberately no Inktober feed.
+
+`:path` is the file's path inside `_inktober/`, so the year directory lands in the URL.
+Keep the year directories: 2027 will reuse prompt words, and a flat `_inktober/` would
+force a rename, which is the one thing that breaks a URL for good.
+
+Jekyll's `previous`/`next` work *within* a collection, so the arrows walk Day 4 → Day 5
+and never wander into an essay. A scoped default in `_config.yml` gives every day
+`layout: inktober` and `author: luis`.
+
+### Publishing a day
+
+```sh
+bin/inktober-day 4 ~/src/tmp-photos-for-uploads/dscf1234.jpg --upload
+```
+
+It looks the prompt up in `_data/inktober.yml`, runs the photo through
+`bin/prepare-photo` (album slug `inktober-<year>`) and writes
+`_inktober/2026/04-cactus.md` with the front matter filled in. Leave `--upload` off for
+a dry run. Three things are stubs on purpose and want a human: the photo's `alt:`, the
+`excerpt:`, and the notes.
+
+`_layouts/inktober.html` prints the day/prompt line and calls `photo.html`, so a day
+file's body is *only* the notes — don't paste `{% include photo.html %}` into it or the
+drawing renders twice.
+
+- **Day N is dated October N**, so the grid and the arrows stay in calendar order however
+  far behind he is. The script warns when that date is still in the future, because
+  **Jekyll skips future-dated documents** — collections get the same `future: false`
+  treatment posts do. Drawing ahead and pushing does nothing until the date passes, and
+  nothing rebuilds when it arrives. Publish the day you draw.
+- **A future-dated day is still in `site.inktober`.** Jekyll keeps it in the collection
+  and only declines to *write* its page, so a naive grid renders a live tile pointing at
+  a 404. `inktober.html` therefore gates every tile — and the `N of 31 inked` count — on
+  `doc.date <= site.time`, unless `site.future` is on. If you add another surface that
+  lists days, it needs the same gate. Verify by building both ways: without `--future`
+  the count and the links must match what actually landed in `_site/`.
+- **The days carry `exif: false`**, so a drawing renders bare: no camera line, and no
+  visible `©` either (see the note in the photo section — they share one `if`). These
+  are phone snapshots of ink on paper; "f/1.7 · ISO 711" describes nothing anyone
+  wants to know about a drawing. `bin/inktober-day` passes `--no-exif`, so the
+  published JPEG keeps only the copyright — no make, model or exposure at all.
+- **Published filenames are `day-NN-prompt.jpg`**, via `--as`, because a phone's
+  `DSC_0421` in a URL cached `immutable` for a year is a permanent shrug. Zero-padded
+  so `aws s3 ls` sorts the album in calendar order and it lines up with the post
+  filename (`01-apple.md`).
+- **`_data/inktober.yml` is the prompt list**, one entry per year, newest first. `/inktober/`
+  walks it, so every day has a cell from October 1st and the grid fills in as files
+  appear. Nothing to edit there as days get drawn. Don't reword the prompts — they're
+  Inktober's list, and the point is everyone got the same word. `list_url:` is where
+  that year's list was announced, rendered as a **link and not an Instagram embed** —
+  the embed loads `instagram.com/embed.js` and sets cookies on page load, same objection
+  as YouTube embeds needing the nocookie host.
+
+### Two things that bite here specifically
+
+- **The grid needs thumbnails.** `bin/prepare-photo --thumb` writes a second
+  `<base>-thumb.jpg` (480px, square-cropped) and adds `thumb:` to the front matter
+  block. Without it the index loads 31 × 2048px JPEGs — twenty-odd megabytes. The
+  grid falls back to `photo.src` if `thumb` is absent, so a missing thumbnail is slow,
+  not broken.
+- **`inktober.html` is styled with tachyons classes and inline `style`, on purpose.**
+  It wants no rule in `stylesheets/style.css`, because Cloudflare caches that file for
+  four hours — a tweak there is invisible to everyone but you for most of a day. Keep
+  new grid styling inline.
+
+Social cards fall back to `/images/ant.png`: a CDN photo can't be an `image:` cover
+(the Referer guard 403s every crawler). Drop a committed
+`/images/covers/inktober-<year>.jpg` in and `bin/inktober-day` picks it up for the whole
+year automatically.
 
 ## Email: this domain doesn't send any
 

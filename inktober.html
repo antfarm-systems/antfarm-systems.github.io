@@ -1,0 +1,109 @@
+---
+title: Inktober
+permalink: /inktober/
+---
+
+{%- comment -%}
+  The grid builds itself from _data/inktober.yml: every prompt gets a cell, and a
+  cell goes live when a file with a matching `day:` shows up in _inktober/<year>/.
+  So the page is complete on October 1st and fills in over the month — nothing to
+  edit here as days get drawn.
+
+  Deliberately no CSS in stylesheets/style.css. Cloudflare caches that file for
+  four hours, so a layout tweak here would be invisible to everyone but you for
+  most of a day. Tachyons classes plus a little inline style ship instantly.
+{%- endcomment -%}
+
+<p class="lh-copy mb4">
+  I'm learning to draw. <a href="https://inktober.com/" class="link blue hover-mid-gray">Inktober</a>
+  is a drawing challenge: one prompt a day for the month of October, in ink, no
+  undo. I doodle it, photograph the page, and put it here. These live apart from
+  the writing on purpose — thirty-one days of a beginner's ink would bury
+  everything else on the front page, and that isn't the trade I want.
+</p>
+
+{%- comment -%}
+  A day dated in the future is still in `site.inktober` — Jekyll keeps it in the
+  collection but refuses to *write* its page (same `future: false` rule as posts).
+  Left alone, the grid would render a live tile pointing at a 404. So every tile
+  is gated on the day's date having arrived, and `inked` is counted the same way,
+  which also keeps the count honest. `site.future` is true under
+  `jekyll serve --future`, where the pages do get written.
+{%- endcomment -%}
+{% assign now = site.time | date: '%s' | plus: 0 %}
+
+{% assign years = site.data.inktober | sort: "year" | reverse %}
+{% for y in years %}
+  {% assign days = site.inktober | where: "year", y.year %}
+  {% assign total = y.prompts | size %}
+
+  {% assign inked = 0 %}
+  {% for d in days %}
+    {% assign ts = d.date | date: '%s' | plus: 0 %}
+    {% if site.future or ts <= now %}{% assign inked = inked | plus: 1 %}{% endif %}
+  {% endfor %}
+
+  <section class="mb5" id="inktober-{{ y.year }}" aria-labelledby="h-inktober-{{ y.year }}">
+    <h2 id="h-inktober-{{ y.year }}" class="ttu f3 mt0 mb2 cb" style="font-family: 'Cousine', monospace;">Inktober {{ y.year }}</h2>
+    <p class="mt0 mb2 silver f7 ttu tracked" style="font-family: 'Cousine', monospace;">
+      {{ inked }} of {{ total }} inked
+    </p>
+    {% if y.list_url %}
+      <p class="mt0 mb4 f7 lh-copy silver">
+        Prompts as <a href="{{ y.list_url }}" class="link blue hover-mid-gray">@inktober published them</a>.
+      </p>
+    {% endif %}
+
+    <ol class="list pa0 ma0 flex flex-wrap">
+      {% for prompt in y.prompts %}
+        {% assign n = forloop.index %}
+        {% assign doc = days | where: "day", n | first %}
+        {%- if doc and site.future != true -%}
+          {% assign doc_ts = doc.date | date: '%s' | plus: 0 %}
+          {% if doc_ts > now %}{% assign doc = false %}{% endif %}
+        {%- endif -%}
+        <li class="w-50 w-25-ns pa2 tc">
+          {% if doc %}
+            <a href="{{ doc.url | relative_url }}" class="db link dark-gray hover-blue">
+              {% if doc.photo and doc.photo.src %}
+                <img src="{{ doc.photo.thumb | default: doc.photo.src }}"
+                     alt="{{ doc.photo.alt }}"
+                     loading="lazy" decoding="async"
+                     class="db w-100 br2 ba b--light-gray"
+                     style="aspect-ratio: 1; object-fit: cover;">
+              {% else %}
+                {%- comment -%} A day written up without a photo still gets a tile. {%- endcomment -%}
+                <span class="db w-100 br2 ba b--light-gray bg-super-white" style="aspect-ratio: 1;"></span>
+              {% endif %}
+              <span class="db mt2 f7 ttu tracked" style="font-family: 'Cousine', monospace;">{{ n }} &middot; {{ prompt }}</span>
+            </a>
+          {% else %}
+            {%- comment -%}
+              Not drawn yet. The placeholder is heavily dimmed and keeps the dashed
+              border, so thirty-one copies of the same doodle still read as "empty"
+              at a glance rather than as thirty-one drawings. alt is empty on purpose:
+              it carries no information a screen reader wants, and the prompt word
+              underneath is already real text.
+            {%- endcomment -%}
+            <span class="db">
+              {% if y.placeholder %}
+                <img src="{{ y.placeholder | relative_url }}" alt=""
+                     loading="lazy" decoding="async"
+                     class="db w-100 br2 ba b--light-gray"
+                     style="aspect-ratio: 1; object-fit: cover; border-style: dashed; opacity: .28;">
+              {% else %}
+                <span class="db w-100 br2 ba b--light-gray bg-super-white" style="aspect-ratio: 1; border-style: dashed;"></span>
+              {% endif %}
+              <span class="db mt2 f7 ttu tracked light-silver" style="font-family: 'Cousine', monospace;">{{ n }} &middot; {{ prompt }}</span>
+            </span>
+          {% endif %}
+        </li>
+      {% endfor %}
+    </ol>
+  </section>
+{% endfor %}
+
+<p class="f7 silver mt5 pt4 bt b--light-gray lh-copy">
+  Prompt list &copy; <a href="https://inktober.com/" class="link blue hover-mid-gray">Inktober</a>.
+  The drawings and the photographs of them are mine.
+</p>

@@ -4,6 +4,9 @@
 #
 #   bin/prepare-photo <album-slug> <file>...            # prepare, don't upload
 #   bin/prepare-photo <album-slug> <file>... --upload    # prepare and ship it
+#   bin/prepare-photo <album-slug> <file>... --thumb     # also make a grid thumbnail
+#   bin/prepare-photo <album-slug> <file>... --no-exif   # don't print the camera line
+#   bin/prepare-photo <album-slug> <file> --as day-01-apple   # name the published file
 #
 # The gallery on luiscerezo.org strips every scrap of metadata, because those
 # photos are served as anonymous rows in a grid. Here the EXIF is the point: a
@@ -31,6 +34,11 @@ CDN="https://dlt23dunpqfwk.cloudfront.net"
 AWS_PROFILE_DEFAULT="personal-lec"
 MAX_EDGE=2048
 QUALITY=82
+# --thumb derivative, for pages that show many photos at once (the Inktober
+# grid). 480px square-cropped keeps a 31-tile page under a megabyte; the full
+# 2048px versions would be more than twenty.
+THUMB_EDGE=480
+THUMB_QUALITY=78
 
 # Tags copied from the original into the stripped derivative. Note the absence
 # of Orientation: -auto-orient has already rotated the pixels, so carrying the
@@ -50,15 +58,35 @@ usage() { grep '^#' "$0" | sed 's/^# \{0,1\}//'; exit 1; }
 [[ $# -lt 2 ]] && usage
 ALBUM="$1"; shift
 UPLOAD=false
+THUMB=false
+SHOW_EXIF=true
+AS=""
 FILES=()
-for arg in "$@"; do
-  case "$arg" in
-    --upload) UPLOAD=true ;;
-    -*) echo "unknown flag: $arg" >&2; exit 1 ;;
-    *) FILES+=("$arg") ;;
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --upload)  UPLOAD=true ;;
+    --thumb)   THUMB=true ;;
+    # For photos where the camera data isn't the point (ink drawings). Drops it
+    # from both places: the printed block loses the camera keys, and nothing is
+    # copied into the published JPEG either — it keeps only the copyright. So
+    # `exif: true` on its own won't bring the line back; re-run without the flag
+    # against the original, which is still in ~/src/tmp-photos-for-uploads/.
+    --no-exif) SHOW_EXIF=false ;;
+    # Name the published file yourself instead of inheriting the camera's. The
+    # CDN path is what ends up in front matter and cached `immutable`, so it's
+    # worth getting readable the first time.
+    --as)      [[ $# -ge 2 ]] || { echo "--as needs a name" >&2; exit 1; }
+               AS="$2"; shift ;;
+    -*) echo "unknown flag: $1" >&2; exit 1 ;;
+    *) FILES+=("$1") ;;
   esac
+  shift
 done
 [[ ${#FILES[@]} -eq 0 ]] && usage
+if [[ -n "$AS" && ${#FILES[@]} -ne 1 ]]; then
+  echo "--as names one output file, but ${#FILES[@]} files were given" >&2
+  exit 1
+fi
 
 command -v magick   >/dev/null || { echo "imagemagick not found (brew install imagemagick)" >&2; exit 1; }
 command -v exiftool >/dev/null || { echo "exiftool not found (brew install exiftool)" >&2; exit 1; }
@@ -74,8 +102,11 @@ for src in "${FILES[@]}"; do
   [[ -f "$src" ]] || { echo "not a file: $src" >&2; exit 1; }
 
   # Same renaming the gallery script uses, so URLs are predictable: basename
-  # lowercased, spaces to hyphens, always .jpg.
-  base="$(basename "${src%.*}" | tr '[:upper:] ' '[:lower:]-')"
+  # lowercased, spaces to hyphens, always .jpg. --as substitutes a name of your
+  # choosing, sanitised identically — a phone's DSC_0421 says nothing useful in a
+  # URL that's going to be cached for a year.
+  base="$(basename "${AS:-$src}")"
+  base="$(echo "${base%.*}" | tr '[:upper:] ' '[:lower:]-')"
   out="$OUT_DIR/${base}.jpg"
   echo "-> $out" >&2
 
@@ -90,6 +121,13 @@ for src in "${FILES[@]}"; do
     -strip \
     "$out"
 
+  # With --no-exif nothing is copied forward at all: the file keeps only the
+  # copyright, exactly like the thumbnail. `magick -strip` already left it bare,
+  # so this is a matter of not putting the camera data back. Note the guarded
+  # expansion — /bin/bash here is 3.2, where "${empty[@]}" trips `set -u`.
+  copy_from_source=()
+  $SHOW_EXIF && copy_from_source=(-tagsFromFile "$src" "${KEEP[@]}")
+
   # -m tolerates the mangled XMP that phone and Wi-Fi-transfer files often
   # carry; without it one bad source aborts the batch under set -e.
   # The trailing # on Orientation and ColorSpace assigns the raw number instead
@@ -97,7 +135,7 @@ for src in "${FILES[@]}"; do
   # gets reverse-matched against the human-readable table and lands on 3 --
   # "Rotate 180" -- which browsers honour, publishing the photo upside down.
   exiftool -m -q -overwrite_original \
-    -tagsFromFile "$src" "${KEEP[@]}" \
+    ${copy_from_source[@]+"${copy_from_source[@]}"} \
     -EXIF:ColorSpace#=1 \
     -EXIF:Orientation#=1 \
     -EXIF:Copyright="$COPYRIGHT" \
@@ -113,6 +151,30 @@ for src in "${FILES[@]}"; do
     echo "REFUSING TO PUBLISH — identifying metadata survived in $out:" >&2
     echo "$leaked" >&2
     exit 1
+  fi
+
+  # Grid thumbnail. Derived from $out, not from $src, so it inherits the
+  # already-rotated pixels and the sRGB conversion instead of redoing both.
+  # `480x480^` fills the square and `-extent` crops the overflow, so every tile
+  # is the same shape no matter how the original was framed. No camera tags:
+  # nothing reads EXIF off a 480px tile, and -strip leaves nothing to leak.
+  if $THUMB; then
+    thumb="$OUT_DIR/${base}-thumb.jpg"
+    echo "-> $thumb" >&2
+    magick "$out" \
+      -resize "${THUMB_EDGE}x${THUMB_EDGE}^" \
+      -gravity center \
+      -extent "${THUMB_EDGE}x${THUMB_EDGE}" \
+      -colorspace sRGB \
+      -quality "$THUMB_QUALITY" \
+      -strip \
+      "$thumb"
+    exiftool -m -q -overwrite_original \
+      -EXIF:ColorSpace#=1 \
+      -EXIF:Orientation#=1 \
+      -EXIF:Copyright="$COPYRIGHT" \
+      -EXIF:Artist="$PHOTOGRAPHER" \
+      "$thumb"
   fi
 
   # -T is tab-delimited: half these values contain spaces ("FUJIFILM", "23.0 mm",
@@ -156,27 +218,37 @@ for src in "${FILES[@]}"; do
   block="photo:
   src: \"${CDN}/antfarm/${ALBUM}/${base}.jpg\"
   alt: \"DESCRIBE THIS — screen readers use it, and so does anyone the Referer guard 403s\""
+  $THUMB && block="$block
+  thumb: \"${CDN}/antfarm/${ALBUM}/${base}-thumb.jpg\""
   [[ -n "$width"  ]] && block="$block
   width: $width"
   [[ -n "$height" ]] && block="$block
   height: $height"
-  block="$block
+  if $SHOW_EXIF; then
+    block="$block
   exif: true"
-  [[ -n "$camera" ]] && block="$block
+    [[ -n "$camera" ]] && block="$block
   camera: \"$camera\""
-  # A named lens beats a focal length; the X100F's is fixed, so it reports none.
-  if [[ -n "$lens" ]]; then
-    block="$block
+    # A named lens beats a focal length; the X100F's is fixed, so it reports none.
+    if [[ -n "$lens" ]]; then
+      block="$block
   lens: \"$lens\""
-  elif [[ -n "$flen" ]]; then
-    block="$block
+    elif [[ -n "$flen" ]]; then
+      block="$block
   lens: \"$flen\""
-  fi
-  [[ -n "$settings" ]] && block="$block
+    fi
+    [[ -n "$settings" ]] && block="$block
   settings: \"$settings\""
-  if [[ -n "$taken" ]]; then
-    block="$block
+    if [[ -n "$taken" ]]; then
+      block="$block
   taken: $(echo "${taken%% *}" | tr ':' '-')"
+    fi
+  else
+    # --no-exif. The camera/lens/settings/taken keys are left out rather than
+    # written and ignored: photo.html reads none of them when exif is false, and
+    # dead keys in front matter invite someone to "fix" them later.
+    block="$block
+  exif: false"
   fi
   frontmatter+=("$block")
 done

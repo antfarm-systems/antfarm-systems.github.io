@@ -1,0 +1,28 @@
+---
+layout: default
+---
+{%- comment -%}
+Furniture for one day of Inktober. Wraps default.html, so a day page gets the
+same header, nav, date line, prev/next arrows and signoff as a post — the only
+difference is what's between the title and the prose.
+
+Everything here is per-day boilerplate that shouldn't be retyped 31 times: the
+prompt line and the photo. The day file's body is just the notes, and can be
+empty on a day there's nothing to say.
+
+`page.day` and `page.prompt` come from front matter; `bin/inktober-day` fills
+them in from _data/inktober.yml so the prompt word can't drift from the list.
+{%- endcomment -%}
+<p class="f7 ttu tracked silver mt0 mb4" style="font-family: 'Cousine', monospace;">
+  Inktober {{ page.year }}
+  {%- if page.day %} &middot; Day {{ page.day }}{% endif -%}
+  {%- if page.prompt %} &middot; Prompt: {{ page.prompt }}{% endif -%}
+</p>
+
+{% include photo.html %}
+
+{{ content }}
+
+<p class="mt4 mb0 f7">
+  <a href="{{ "/inktober/" | relative_url }}" class="link blue hover-mid-gray">&larr; all {{ page.year }} days</a>
+</p>

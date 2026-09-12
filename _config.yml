@@ -16,16 +16,35 @@ links:
   - name:         Collections
     url:          /collections/
     external:     false
+  - name:         Inktober
+    url:          /inktober/
+    external:     false
   - name:         About The AntFarm
     url:          /about
     external:     false
 # ------------ CONFIGURABLE END ------------
 
 permalink:        /posts/:title
+
+# The ink drawings are a collection, not posts, so they stay out of `site.posts`
+# entirely — the front page, feed.xml, best-of, collections and the prev/next
+# arrows all skip them without needing a filter. `:path` is the file's path
+# inside _inktober/, so the year directory ends up in the URL:
+#   _inktober/2026/04-cactus.md  ->  /inktober/2026/04-cactus
+collections:
+  inktober:
+    output: true
+    permalink: /inktober/:path
+
 defaults:
   - values:
       layout: "default"
       author: "antfarm" # Byline key from _data/authors.yml. Use "luis" for posts you wrote.
+  - scope:
+      type: "inktober"
+    values:
+      layout: "inktober" # wraps default.html and prints the day/prompt line + photo
+      author: "luis"     # they're all his hand
 
 include:
   - "*.txt"

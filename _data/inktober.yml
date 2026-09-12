@@ -1,0 +1,56 @@
+# Official Inktober prompt lists, transcribed from @inktober's announcement post.
+#
+# `inktober.html` walks this file to build the grid, so every day gets a cell
+# whether or not it's been drawn yet — an entry here is the prompt, a file in
+# `_inktober/<year>/` is the drawing. Order is the day number: prompts[0] is
+# day 1. Add a new year on top; the index page lists newest first.
+#
+# Don't reword these. They're someone else's list and the whole point is that
+# everyone drawing along got the same word.
+#
+# `list_url` is where the list was announced, so the page can point at the source
+# instead of asking anyone to take this transcription on faith. A link, not an
+# Instagram embed: the embed loads instagram.com/embed.js and sets cookies on page
+# load, which is the same objection that makes YouTube embeds use the nocookie host.
+
+# `placeholder` is what an undrawn day shows in the grid, dimmed, instead of an
+# empty dashed box. It's committed under /images/ rather than living on the CDN:
+# one file serving thirty-one tiles is site furniture, and a CDN object cached
+# `immutable` would be the wrong place for something meant to be swapped out.
+# Delete the key and the grid goes back to empty boxes.
+
+- year: 2026
+  list_url: "https://www.instagram.com/inktober/p/DcvuJxSpkRA/"
+  placeholder: "/images/inktober-placeholder.jpg"
+  prompts:
+    - Apple          # 1
+    - Relic          # 2
+    - Miniature      # 3
+    - Cactus         # 4
+    - Smack          # 5
+    - Ogre           # 6
+    - Panic          # 7
+    - Stinky         # 8
+    - Ram            # 9
+    - Mystical       # 10
+    - Rescue         # 11
+    - Toss           # 12
+    - Flimsy         # 13
+    - Lady           # 14
+    - Hooray         # 15
+    - Gangly         # 16
+    - Contraption    # 17
+    - Flightless     # 18
+    - Confused       # 19
+    - Lounge         # 20
+    - Hero           # 21
+    - Beacon         # 22
+    - Dapper         # 23
+    - Bake           # 24
+    - Fracture       # 25
+    - Zip            # 26
+    - Dumb           # 27
+    - Trophy         # 28
+    - Tusk           # 29
+    - Cookie         # 30
+    - Flex           # 31

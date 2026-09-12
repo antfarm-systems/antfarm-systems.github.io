@@ -1,0 +1,146 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# Scaffold one day of Inktober.
+#
+#   bin/inktober-day 4 ~/src/tmp-photos-for-uploads/dscf1234.jpg --upload
+#   bin/inktober-day 4 ~/src/tmp-photos-for-uploads/dscf1234.jpg   # dry run
+#   bin/inktober-day 4                                             # no photo yet
+#   bin/inktober-day --year 2027 4 photo.jpg
+#   bin/inktober-day --help
+#
+# Thirty-one days is only sustainable if publishing one is a single command, so
+# this does the whole thing: looks the prompt up in _data/inktober.yml, runs the
+# photo through bin/prepare-photo (with --thumb, for the grid), and writes
+# _inktober/<year>/NN-prompt.md with the front matter already filled in.
+#
+# It writes a file; it does not commit or push. Two lines are stubs on purpose
+# and want your hand before that: the photo's `alt:` and the `excerpt:`.
+
+require 'yaml'
+require 'date'
+require 'fileutils'
+require 'open3'
+
+REPO = File.expand_path('..', __dir__)
+DATA = File.join(REPO, '_data', 'inktober.yml')
+
+def die(msg)
+  warn "inktober-day: #{msg}"
+  exit 1
+end
+
+# ---- args
+day = nil
+photo = nil
+year = nil
+upload = false
+force = false
+
+args = ARGV.dup
+while (arg = args.shift)
+  case arg
+  when '--help', '-h'
+    puts File.read(__FILE__).lines[3..9].map { |l| l.sub(/\A# ?/, '') }.join
+    exit 0
+  when '--upload' then upload = true
+  when '--force'  then force = true
+  when '--year'   then year = args.shift.to_i
+  when /\A--/     then die "unknown flag: #{arg}"
+  when /\A\d+\z/  then day = arg.to_i
+  else photo = arg
+  end
+end
+
+die 'which day? (bin/inktober-day 4 photo.jpg)' if day.nil?
+
+years = YAML.load_file(DATA)
+# Default to the newest list in the data file rather than Date.today.year, so
+# this still works in September when you're setting up, and in November when
+# you're finishing late.
+entry = year ? years.find { |y| y['year'] == year } : years.max_by { |y| y['year'] }
+die "no prompt list for #{year} in _data/inktober.yml — add one" if entry.nil?
+
+year = entry['year']
+prompts = entry['prompts']
+die "day #{day} is outside 1..#{prompts.size} for #{year}" unless (1..prompts.size).cover?(day)
+
+prompt = prompts[day - 1]
+slug = format('%<day>02d-%<prompt>s', day: day, prompt: prompt.downcase.gsub(/[^a-z0-9]+/, '-'))
+dir = File.join(REPO, '_inktober', year.to_s)
+dest = File.join(dir, "#{slug}.md")
+die "#{dest.sub("#{REPO}/", '')} exists already (--force to overwrite)" if File.exist?(dest) && !force
+
+# ---- photo
+# prepare-photo prints the `photo:` front matter block on stdout and everything
+# else on stderr, so stderr is passed straight through to the terminal and only
+# stdout is captured.
+photo_block = nil
+if photo
+  die "not a file: #{photo}" unless File.file?(photo)
+
+  # --no-exif: these are phone snapshots of drawings, and "f/1.7 · ISO 711" says
+  # nothing about a drawing. --as: the CDN path is cached `immutable` for a year,
+  # so it gets a name that means something instead of the phone's DSC_0421.
+  cmd = [File.join(REPO, 'bin', 'prepare-photo'), "inktober-#{year}", photo,
+         '--thumb', '--no-exif', '--as', "day-#{format('%02d', day)}-#{prompt.downcase.gsub(/[^a-z0-9]+/, '-')}"]
+  cmd << '--upload' if upload
+  out, status = Open3.popen3(*cmd) do |_stdin, stdout, stderr, wait|
+    err = Thread.new { stderr.each_line { |l| warn l.chomp } }
+    captured = stdout.read
+    err.join
+    [captured, wait.value]
+  end
+  die 'prepare-photo failed — nothing written' unless status.success?
+
+  photo_block = out.strip
+  die 'prepare-photo printed no front matter' if photo_block.empty?
+end
+
+# ---- date
+# Day N is October N, always, so the grid and the prev/next arrows stay in
+# calendar order however far behind you are. The clock time comes from now,
+# which keeps the timestamp in the past on a catch-up day.
+date = Date.new(year, 10, day)
+stamp = "#{date.strftime('%F')} #{Time.now.strftime('%H:%M:%S %z')}"
+if Date.today < date
+  warn "inktober-day: heads up — #{date.strftime('%F')} is in the future, so this " \
+       "won't appear in a build until that date. Jekyll skips future-dated documents."
+end
+
+# A CDN photo can't be the social card (the Referer guard 403s every crawler), so
+# the whole year shares one committed cover if you've dropped one in. Without it,
+# head.html falls back to /images/ant.png.
+cover = "/images/covers/inktober-#{year}.jpg"
+have_cover = File.exist?(File.join(REPO, cover.sub(%r{\A/}, '')))
+
+fm = []
+fm << "title: #{format('"Day %d: %s"', day, prompt)}"
+fm << "date: #{stamp}"
+fm << "day: #{day}"
+fm << "year: #{year}"
+fm << "prompt: #{prompt}"
+fm << "excerpt: \"WRITE ONE LINE — it's the Google snippet and the link card. " \
+      "Day #{day} of Inktober #{year}, the prompt was #{prompt.downcase}.\""
+fm << "image: #{cover}" if have_cover
+fm << photo_block if photo_block
+
+body = <<~BODY
+  #### What I learned
+
+  WRITE THIS OR DELETE IT.
+BODY
+
+FileUtils.mkdir_p(dir)
+File.write(dest, ['---', *fm, '---', '', body].join("\n"))
+
+puts "wrote #{dest.sub("#{REPO}/", '')}"
+puts "prompt Day #{day} of Inktober #{year} — #{prompt}"
+if photo_block
+  puts(upload ? 'photo  uploaded to the CDN, thumbnail and all' : 'photo  prepared in tmp/ but NOT uploaded — re-run with --upload')
+else
+  puts 'photo  none — run again with a file, or paste a photo: block in by hand'
+end
+puts "cover  #{have_cover ? cover : "none at #{cover}, so the card falls back to /images/ant.png"}"
+puts
+puts 'Still to do by hand: the photo\'s alt text, the excerpt, and the notes.'
