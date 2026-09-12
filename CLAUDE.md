@@ -361,7 +361,8 @@ luis.cerezo@gmail.com as daily zips.
   column. It clears floats, so it won't cut through a floated book cover.
 - `_data/authors.yml` holds bylines. `_config.yml` defaults posts to `antfarm`;
   `author: luis` is for the ones he wrote.
-- `TODO.md` is gitignored working notes. `_posts/2025-11-24-aws-pricing-game.md` is
-  untracked on purpose — leave it alone.
+- `TODO.md` is gitignored working notes. `_drafts/aws-pricing-game.md` is shelved,
+  not abandoned — it sat untracked in `_posts/` for a while, which is the worst of
+  both worlds. It's in `_drafts/` now, so it can be committed without publishing.
 - Staged changes are often Luis's prose in progress. Always `git add` with an
   explicit pathspec so his work doesn't ride along in an agent commit.
