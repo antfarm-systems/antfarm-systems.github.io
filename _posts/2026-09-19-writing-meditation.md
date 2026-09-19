@@ -33,7 +33,7 @@ In Stephen Brozovich's great talk, he highlights the skills that are valuable in
 
 As humans, we can't write as fast as the models. We can't research as fast as the models. We can't even see the patterns in complex systems as fast as the models, and we definitely can't write code as fast as the models. So if our tech skills are no longer the differentiator, what is? it must be our humanity, that connection between the human and the digital agent, and each other. Our ***humanity*** is what we need to lean into. 
 
-About a year ago I took up journaling, doodling and all things pen and paper. There's more research now that supports the idea that writing out notes (__in analog__) binds our brain better. So I've leaned into this. I take meeting notes on paper, todos, and more. I've learned a bit more of how my focus works (poorly, but I'm working on it) and how I think. I've also started to develop stronger opinions on pens and stationery, with such hot takes as moleskine is mid-tier on it's ***best*** day (COME AT ME BRUH!) and Zento is smooooth. 
+About a year ago I took up journaling, doodling and all things pen and paper. There's more research now that supports the idea that writing out notes (__in analog__) binds our brain better. So I've leaned into this. I take meeting notes on paper, todos, and more. I've learned a bit more of how my focus works (poorly, but I'm working on it) and how I think. I've also started to develop stronger opinions on pens and stationery, with such hot takes as *'moleskine is mid-tier on it's **best** day'* (COME AT ME BRUH!) and '*Zento is smooooth.* '
 
 I've written so much I emptied a pen.
 
@@ -43,7 +43,7 @@ Last week we took some time off. We rented a nice place facing the meadow and Mt
 
 {% include photo.html photo=page.photo_page %}
 
-very slowly. I'm not sure if this is human, but I'm trying to be more human every day, and I believe this will make me a better technologist in the world of AI.
+very slowly. I'm not sure if this is human, but I'm trying to be more human every day, and  this is part of the journey. I do believe this will make me a better technologist in the world of AI, and possibly a better person. ***maybe***.
 
 btw- the most human thing about this post is I wrote *A LOT OF FUCKING PAGES* of A5 meditations, that I mis-heard. I like my version fine.
 
