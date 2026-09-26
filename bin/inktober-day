@@ -131,13 +131,25 @@ body = <<~BODY
   WRITE THIS OR DELETE IT.
 BODY
 
+content = ['---', *fm, '---', '', body].join("\n")
+
+# A dry run shows the file instead of writing it. Written, it would point at CDN
+# URLs with nothing behind them, and the --upload re-run would trip over it as
+# "exists already". No photo at all is different: that stub is meant to be saved.
+if photo && !upload
+  puts content
+  puts
+  puts 'dry run — nothing written. Re-run with --upload to publish.'
+  exit 0
+end
+
 FileUtils.mkdir_p(dir)
-File.write(dest, ['---', *fm, '---', '', body].join("\n"))
+File.write(dest, content)
 
 puts "wrote #{dest.sub("#{REPO}/", '')}"
 puts "prompt Day #{day} of Inktober #{year} — #{prompt}"
 if photo_block
-  puts(upload ? 'photo  uploaded to the CDN, thumbnail and all' : 'photo  prepared in tmp/ but NOT uploaded — re-run with --upload')
+  puts 'photo  uploaded to the CDN, thumbnail and all'
 else
   puts 'photo  none — run again with a file, or paste a photo: block in by hand'
 end
