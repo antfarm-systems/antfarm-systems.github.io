@@ -20,6 +20,8 @@
   {% else %}
     {{ byline_name }}
   {% endif %}
-  <span class="silver">{{ page.date | date: "at %H:%M" }}</span>
+  {%- comment -%} A date with no time lands at midnight; don't print a fake one. {%- endcomment -%}
+  {%- assign posted_at = page.date | date: "%H:%M" -%}
+  {% unless posted_at == "00:00" %}<span class="silver">at {{ posted_at }}</span>{% endunless %}
 </p>
 <img src="{{ "/images/scribble3.png" | relative_url }}" alt="scribble" />
