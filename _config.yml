@@ -54,6 +54,7 @@ exclude:
   - "Gemfile*"
   - "README*"
   - "CLAUDE.md" # repo instructions, not site content
+  - "docs" # notes for working on the site, not site content
 
 plugins:
   - jekyll-sitemap

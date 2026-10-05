@@ -12,6 +12,10 @@ git config core.hooksPath .githooks
 
 This activates a pre-commit hook that auto-updates the warrant canary date on every commit.
 
+## Publishing
+
+Step-by-step for an Inktober day or a photo post: [`docs/publishing.md`](docs/publishing.md).
+
 ## Agent Guidelines
 
 Any commit that was written or co-written by an AI agent must include attribution in the commit message:
