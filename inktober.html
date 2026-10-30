@@ -1,6 +1,11 @@
 ---
 title: Inktober
 permalink: /inktober/
+banner:                      # drawn above the title by _layouts/default.html
+  src: /images/inktober-placeholder.jpg
+  alt: "A doodle of a hanging lamp with a glowing yellow bulb, lettered Inktober 2026"
+  width: 480
+  height: 480
 ---
 
 {%- comment -%}
@@ -46,17 +51,6 @@ permalink: /inktober/
   {% endfor %}
 
   <section class="mb5" id="inktober-{{ y.year }}" aria-labelledby="h-inktober-{{ y.year }}">
-    {%- comment -%}
-      The year's placeholder doubles as its title card. Shown at full strength here,
-      unlike the dimmed copies standing in for undrawn days in the grid below.
-    {%- endcomment -%}
-    {% if y.placeholder %}
-      <img src="{{ y.placeholder | relative_url }}"
-           alt="A doodle of a hanging lamp with a glowing yellow bulb, lettered Inktober {{ y.year }}"
-           width="480" height="480" decoding="async"
-           class="db center mb3 br2"
-           style="width: 100%; max-width: 240px; height: auto;">
-    {% endif %}
     <h2 id="h-inktober-{{ y.year }}" class="ttu f3 mt0 mb2 cb" style="font-family: 'Cousine', monospace;">Inktober {{ y.year }}</h2>
     <p class="mt0 mb2 silver f7 ttu tracked" style="font-family: 'Cousine', monospace;">
       {{ inked }} of {{ total }} inked

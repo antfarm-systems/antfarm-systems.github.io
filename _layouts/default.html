@@ -26,6 +26,17 @@
       </nav>
 
       <main class="tl f6 relative pa4 pa5-ns overflow-hidden"{% if is_post %} data-post-date="{{ page.date | date: '%Y-%m-%d' }}"{% endif %}>
+        {%- comment -%}
+          Optional picture above the title: `banner: {src, alt, width, height}` in
+          front matter. Only /inktober/ uses it today. Inline style on purpose, so
+          it needs nothing from the Cloudflare-cached style.css.
+        {%- endcomment -%}
+        {% if page.banner %}
+          <img src="{{ page.banner.src | relative_url }}" alt="{{ page.banner.alt | escape }}"
+               {% if page.banner.width %}width="{{ page.banner.width }}" height="{{ page.banner.height }}"{% endif %}
+               decoding="async" class="db center mb4 br2"
+               style="width: 100%; max-width: {{ page.banner.max_width | default: '240px' }}; height: auto;">
+        {% endif %}
         {% if page.title %}
           <div class="mb4">
             {% if page.date %}<div class="fw600 light-silver mt1">{{ page.date | date_to_string }}</div>{% endif %}
